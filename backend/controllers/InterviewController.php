@@ -120,8 +120,9 @@ class InterviewController extends Controller
         $resultExcel->getActiveSheet()->setCellValue('V1','半年业绩大区排名');
         $resultExcel->getActiveSheet()->setCellValue('W1','合作单边比');
         $resultExcel->getActiveSheet()->setCellValue('X1','合作单边比大区排名');
-        $resultExcel->getActiveSheet()->setCellValue('Y1','半年带看量');
-        $resultExcel->getActiveSheet()->setCellValue('Z1','半年录入客户量');
+        $resultExcel->getActiveSheet()->setCellValue('Y1','半年(房)');
+        $resultExcel->getActiveSheet()->setCellValue('Z1','半年(客)');
+        $resultExcel->getActiveSheet()->setCellValue('AA1','半年(带)');
         $i=2;
         foreach ($model as $k=>$v){
             $data=InterviewData::findOne(['work_number'=>$v->work_number,'year_month'=>$yearMonth]);
@@ -154,6 +155,7 @@ class InterviewController extends Controller
             $resultExcel->getActiveSheet()->setCellValue('X'.$i,"'".$data->co_single_range."'");
             $resultExcel->getActiveSheet()->setCellValue('Y'.$i,"'".$data->half_qual."'");
             $resultExcel->getActiveSheet()->setCellValue('Z'.$i,"'".$data->half_record."'");
+            $resultExcel->getActiveSheet()->setCellValue('AA'.$i,"'".$data->half_cus."'");
             $i++;
         }
          
@@ -223,6 +225,10 @@ class InterviewController extends Controller
             $result = 0;
             $irecord = 0;
     
+            $sql="TRUNCATE TABLE interview_district";
+            yii::$app->db->createCommand($sql)->query();
+            
+            AdminUser::deleteAll(['role_id'=>['88','89']]);
     
             foreach ($sheetData as $k=>$record)
             {
@@ -351,6 +357,7 @@ class InterviewController extends Controller
             $interviewData->co_single_range=$record['W'];
             $interviewData->half_qual=$record['X'];
             $interviewData->half_record=$record['Y'];
+            $interviewData->half_cus=$record['Z'];
             if($interviewData->save()){
               
                 $result++;
