@@ -18,7 +18,7 @@ class SearchUser extends User
     public function rules()
     {
         return [
-            [['id', 'role_id', 'sex', 'is_auth', 'mobile_verify', 'email_verify', 'isenable', 'created_at', 'updated_at'], 'integer'],
+            [['pid', 'role_id', 'sex', 'is_auth', 'mobile_verify', 'email_verify', 'isenable', 'created_at', 'updated_at'], 'integer'],
             [['openid', 'user_guid', 'username', 'access_token', 'auth_key', 'password', 'real_name', 'work_number', 'nick', 'city', 'province', 'country', 'address', 'big_district', 'business_district', 'path', 'photo', 'img_path', 'mobile', 'email', 'district', 'business_circle', 'building', 'shop', 'sign', 'subscribe_time'], 'safe'],
         ];
     }
@@ -58,7 +58,8 @@ class SearchUser extends User
             return $dataProvider;
         }
 
-        $query->andFilterWhere([         
+        $query->andFilterWhere([  
+            'pid' => $this->pid,
             'is_auth' => $this->is_auth,
             'mobile_verify' => $this->mobile_verify,
             'email_verify' => $this->email_verify,

@@ -1,6 +1,7 @@
 <?php
 return [
-    'admin_user.role_id.99'=>'超级管理员',
+    'admin_user.role_id.99'=>'系统管理员',
+    'admin_user.role_id.98'=>'普通管理员',
     'admin_user.role_id.89'=>'大区总监',
     'admin_user.role_id.88'=>'大区助理',
     'user.role_id.89'=>'大区总监',

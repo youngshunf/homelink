@@ -18,15 +18,16 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/site.css',
-        'flatlab/css/bootstrap-reset.css',
-        'css/Font-Awesome-3.2.1/css/font-awesome.min.css'
+        'AdminLTE/dist/css/AdminLTE.min.css',
+        'AdminLTE/dist/css/skins/_all-skins.css',
+        'icheck/skins/all.css',
     ];
     public $jsOptions=[
-    'position'=> View::POS_HEAD
+        'position'=> View::POS_HEAD
     ];
-    public $js = [    
-        'js/common.js',         
+    public $js = [
+        'icheck/icheck.min.js',
+        'AdminLTE/dist/js/app.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

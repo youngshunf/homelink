@@ -42,7 +42,7 @@ class Activity extends \yii\db\ActiveRecord
     {
         return [
             [['scope' ,'type', 'max_number','title','province','city','address','start_time','end_time','sign_end_time','sign_start_time'], 'required'],
-            [[ 'scope', 'type', 'max_number', 'created_at', 'updated_at','is_top'], 'integer'],
+            [[ 'scope', 'type', 'max_number', 'created_at', 'updated_at','is_top','score','pid'], 'integer'],
             [['content'], 'string'],
             [['outer_link','is_card_done','shop'],'safe'],
             [['title'], 'string', 'max' => 256],
@@ -74,6 +74,7 @@ class Activity extends \yii\db\ActiveRecord
             'max_number' => '最大参与人数',
             'sign_end_time' => '报名截止时间',
             'sign_start_time' => '报名开始时间',
+            'score'=>'学分',
             'shop' => '竞聘店面',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',

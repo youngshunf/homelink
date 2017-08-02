@@ -67,43 +67,43 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-     $url="http://eagleeye.yisier.com/ApiProvider!cxMsResult.svr";
-   // $url="http://localhost/homelink/backend/web/site/test";
-     $secPwd='Y@c1Ai&Qx8';//Y%2540c1Ai%2526Qx8
-     $idNo='孙嘉辰';
-     $md5Auth=md5($secPwd.date('Y-m-d').$idNo);
+//      $url="http://eagleeye.yisier.com/ApiProvider!cxMsResult.svr";
+//    // $url="http://localhost/homelink/backend/web/site/test";
+//      $secPwd='Y@c1Ai&Qx8';//Y%2540c1Ai%2526Qx8
+//      $idNo='孙嘉辰';
+//      $md5Auth=md5($secPwd.date('Y-m-d').$idNo);
    
-     $data=[
-         'secPwd'=>$secPwd,
-         'idNo'=>$idNo,
-         'md5Auth'=>$md5Auth
-     ];
-     print_r($data);
-     $result=$this->post($url,$data);
-    // $result=json_decode($result,true);
-    // echo $md5AuthStr; 
-   //  print_r($data);
-    $result=json_decode($result,true);
-    $i=0;
-    $content='';
-    if($result['code']=='1001'){
-        foreach ($result['results'] as $v){
-            $content .='
-第'.($i++).'位:
-姓名:'.@$v['sName'].';
-身份证号:'.@$v['idNo'].';
-电话:'.@$v['srPhone'].';
-推荐人系统号:'.@$v['reeBrokerId'].';
-推荐人:'.@$v['reeName'].';
-面试时间:'.@$v['msDate'].';
-面试结果:'.@$v['passStat'];
-        }
-    } 
-    echo $content;
-     print_r($result);die;
+//      $data=[
+//          'secPwd'=>$secPwd,
+//          'idNo'=>$idNo,
+//          'md5Auth'=>$md5Auth
+//      ];
+//      print_r($data);
+//      $result=$this->post($url,$data);
+//     // $result=json_decode($result,true);
+//     // echo $md5AuthStr; 
+//    //  print_r($data);
+//     $result=json_decode($result,true);
+//     $i=0;
+//     $content='';
+//     if($result['code']=='1001'){
+//         foreach ($result['results'] as $v){
+//             $content .='
+// 第'.($i++).'位:
+// 姓名:'.@$v['sName'].';
+// 身份证号:'.@$v['idNo'].';
+// 电话:'.@$v['srPhone'].';
+// 推荐人系统号:'.@$v['reeBrokerId'].';
+// 推荐人:'.@$v['reeName'].';
+// 面试时间:'.@$v['msDate'].';
+// 面试结果:'.@$v['passStat'];
+//         }
+//     } 
+//     echo $content;
+//      print_r($result);die;
        $user=yii::$app->user->identity;
-        if($user->role_id!=99){
-            return $this->redirect('interview-supervisor');
+        if($user->role_id==89 || $user->role_id==88){
+            return $this->redirect('interview-supervisor/index');
         }
         return $this->render('index');
     }
@@ -161,7 +161,7 @@ class SiteController extends Controller
             
             return $this->goBack();
         } else {
-            return $this->render('login', [
+            return $this->renderPartial('login', [
                 'model' => $model,
             ]);
         }

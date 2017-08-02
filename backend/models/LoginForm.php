@@ -50,7 +50,7 @@ class LoginForm extends Model
 	        if (!$user) {
 	            $this->addError($attribute, '用户名或密码错误.');
 	        }else{
-	         	if ($user['role_id'] == 99||$user['role_id'] == 89||$user['role_id'] == 88) {
+	            if ($user['role_id'] == 99 || $user['role_id'] == 98 || $user['role_id'] == 89||$user['role_id'] == 88) {
 	        		$login_time = time();
 	        		$login_ip = CommonUtil::getClientIp();
 	        		setcookie('user',$user['username'], time() + 86400);

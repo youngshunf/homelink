@@ -62,7 +62,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     {
         return [
             [['openid', 'user_guid'], 'required'],
-            [['role_id', 'sex', 'is_auth', 'mobile_verify', 'email_verify', 'isenable', 'created_at', 'updated_at'], 'integer'],
+            [['role_id', 'sex', 'is_auth','pid', 'mobile_verify', 'email_verify', 'isenable', 'created_at', 'updated_at'], 'integer'],
             [['sign'], 'string'],
             [['subscribe_time'], 'safe'],
             [['openid', 'user_guid', 'password', 'email'], 'string', 'max' => 48],

@@ -58,10 +58,10 @@ class UserController extends Controller
         ];
     }
 
-    public function beforeAction($action){        
-        $this->layout='@app/views/layouts/user_layout.php';
-        return parent::beforeAction($action);
-    }
+//     public function beforeAction($action){        
+//         $this->layout='@app/views/layouts/user_layout.php';
+//         return parent::beforeAction($action);
+//     }
     /**
      * Lists all User models.
      * @return mixed
@@ -70,10 +70,24 @@ class UserController extends Controller
     {
           $searchModel = new SearchUser();
           $searchModel->is_auth=1;
+          $user=yii::$app->user->identity;
+          if($user->role_id==98){
+              $searchModel->pid=$user->id;
+          }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $this->layout='@app/views/layouts/user_layout.php';
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionManager()
+    {
+       
+        $dataProvider =new ActiveDataProvider([
+            'query'=>AdminUser::find()->orderBy('role_id desc')
+        ]);
+        return $this->render('manager', [
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -167,16 +181,27 @@ class UserController extends Controller
     }
     
     public function  actionGroup(){
-        $dataProvider=new ActiveDataProvider([
-            'query'=>UserGroup::find()->orderBy('created_at desc'),
-        ]);
-        $this->layout='@app/views/layouts/user_layout.php';
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $dataProvider=new ActiveDataProvider([
+                'query'=>UserGroup::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc'),
+            ]);
+        }else{
+            $dataProvider=new ActiveDataProvider([
+                'query'=>UserGroup::find()->orderBy('created_at desc'),
+            ]);
+        }
+       
         return $this->render('group',['dataProvider'=>$dataProvider]);
     }
     
     public function actionCreateGroup(){
         $model=new UserGroup();
         $model->user_guid=yii::$app->user->identity->user_guid;
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $model->pid=$user->id;
+        }
         $model->group_name=$_POST['group-name'];
         $model->created_at=time();
         if($model->save()){
@@ -201,7 +226,6 @@ class UserController extends Controller
         ]);
         
         $model=UserGroup::findOne($id);
-        $this->layout='@app/views/layouts/user_layout.php';
         return $this->render('view-group',[
             'model'=>$model,
             'dataProvider'=>$dataProvider,
@@ -245,7 +269,6 @@ class UserController extends Controller
         $searchModel = new SearchUser();
           $searchModel->is_auth=0;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $this->layout='@app/views/layouts/user_layout.php';
         return $this->render('normal', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -261,13 +284,13 @@ class UserController extends Controller
             ],
         ]);
         
-        $this->layout='@app/views/layouts/user_layout.php';
         return $this->render('auth-user', [
             'dataProvider' => $dataProvider,
         ]);
     }
     
     public function actionImportAuth(){
+        $user=yii::$app->user->identity;
      $file=UploadedFile::getInstanceByName('importfrom');
         if(!isset($file)){
             yii::$app->getSession()->setFlash('error','文件上传失败,请重试');            
@@ -308,6 +331,9 @@ class UserController extends Controller
               }
              
             $authUser=new AuthUser();
+            if($user->role_id==98){
+             $authUser->pid=$user->id;
+            }
             $authUser->work_number=trim($record['A']);
             $authUser->name=trim($record['B']);
              $authUser->big_district=trim($record['C']);
@@ -422,13 +448,41 @@ class UserController extends Controller
     public function actionView($id)
     {
  	
-    
         return $this->render('view', [
             'model' => $this->findModel($id),
 
         ]);
     }
   
+    public function actionViewAdmin($id)
+    {
+        $model=AdminUser::findOne($id);
+        return $this->render('view-admin', [
+            'model' => $model,
+        ]);
+    }
+    
+    public function actionUpdateAdmin($id)
+    {
+        $model=AdminUser::findOne($id);
+        $model->setScenario('manager_update');
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+            
+        }elseif ($model->load(Yii::$app->request->post())){
+            $model->updated_at=time();
+            if($model->save()){
+                return $this->redirect('manager');
+            }else{
+                yii::$app->getSession()->setFlash('error','管理员信息修改失败!');
+            }
+               
+        }
+        return $this->render('update-admin', [
+            'model' => $model,
+        ]);
+    }
 
     /**
      * Creates a new User model.
@@ -446,14 +500,18 @@ class UserController extends Controller
         }elseif ($model->load(Yii::$app->request->post())){
             $model->user_guid=CommonUtil::createUuid();
             $model->password=md5($model->password);
+            $model->password2=md5($model->password2);
             $model->created_at=time();
-            if($model->save())       
-            return $this->redirect('manager');
-        } else {
+            if($model->save()){
+                return $this->redirect('manager');
+            }else{
+                yii::$app->getSession()->setFlash('error','新增管理员失败!');
+            }
+        } 
             return $this->render('create', [
                 'model' => $model,
             ]);
-        }
+        
     }
 
     /**
@@ -498,9 +556,17 @@ class UserController extends Controller
     }
 
     public function actionTemplateMessage(){
-        $dataProvider= new ActiveDataProvider([
-            'query'=>Template::find()->orderBy('created_at desc'),
-        ]);
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $dataProvider= new ActiveDataProvider([
+                'query'=>Template::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc'),
+            ]);
+        }else{
+            $dataProvider= new ActiveDataProvider([
+                'query'=>Template::find()->orderBy('created_at desc'),
+            ]);
+        }
+        
         
         return $this->render('template-message',[
             'dataProvider'=>$dataProvider
@@ -538,11 +604,40 @@ class UserController extends Controller
         yii::$app->getSession()->setFlash('success','此次共成功发送'.$result."条模板消息");
         return $this->redirect(['view-template','id'=>$id]);
     }
+    public function actionChangePassword(){
+        return $this->render('change-password');
+    }
     
+    public function actionChangePasswordDo(){
+        $user=yii::$app->user->identity;
+        $oldPwd=$_POST['oldPwd'];
+        if(md5($oldPwd)!=$user->password){
+            yii::$app->getSession()->setFlash('eorror','操作失败,旧密码错误!');
+            return $this->redirect(yii::$app->request->referrer);
+        }
+        $pwd1=$_POST['pwd1'];
+        $pwd2=$_POST['pwd2'];
+        if($pwd1!=$pwd2){
+            yii::$app->getSession()->setFlash('eorror','操作失败,两次密码不一致!');
+            return $this->redirect(yii::$app->request->referrer);
+        }
+        $user1=AdminUser::findOne(['id'=>yii::$app->user->identity->id]);
+        $user1->password=md5($pwd1);
+        if($user1->save()){
+            yii::$app->getSession()->setFlash('success','密码修改成功!');
+            return $this->redirect(yii::$app->request->referrer);
+        }
+        yii::$app->getSession()->setFlash('error','密码修改失败!');
+        return $this->redirect(yii::$app->request->referrer);
+    }
     public function actionCreateTemplate(){
         $model=new Template();
         if($model->load(yii::$app->request->post())){
+            $user=yii::$app->user->identity;
             $model->user_guid=yii::$app->user->identity->user_guid;
+            if($user->role_id==98){
+                $model->pid=$user->id;
+            }
             $model->created_at=time();
             if ($model->save()){
             $data=$_POST['optArr'];  

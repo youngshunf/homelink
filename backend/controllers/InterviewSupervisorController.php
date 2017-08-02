@@ -47,10 +47,10 @@ class InterviewSupervisorController extends Controller
         ];
     }
     
-    public function beforeAction($action){
-        $this->layout='@app/views/layouts/isp_layout.php';
-        return parent::beforeAction($action);
-    }
+//     public function beforeAction($action){
+//         $this->layout='@app/views/layouts/isp_layout.php';
+//         return parent::beforeAction($action);
+//     }
 
     /**
      * Lists all InterviewDistrict models.

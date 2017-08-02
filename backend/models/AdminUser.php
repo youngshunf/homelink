@@ -43,7 +43,7 @@ class AdminUser extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
-
+    public $password2;
     /**
      * @inheritdoc
      */
@@ -68,7 +68,13 @@ class AdminUser extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-           
+            
+            [['username','password2','password','role_id','company'], 'required','on'=>['manager_create']],
+            [['username','role_id','company'], 'required','on'=>['manager_update']],
+            [['real_name', 'nick','sex','mobile','email'], 'safe','on'=>['manager_create','manager_update']],
+            ['username', 'unique', 'message'=>'用户名已存在','on'=>['manager_create']],
+            // 验证两次输入的密码是否一致
+            ['password2', 'compare', 'compareAttribute'=>'password','message'=>'两次密码不一致','on'=>['manager_create']],
         ];
     }
 	
@@ -80,7 +86,13 @@ class AdminUser extends ActiveRecord implements IdentityInterface
     	  'last_ip'=>'上次登录IP',
     	   'last_time'=>'上次登录时间',
     	   'role_id'=>'用户角色',
-    	'password'=>'密码'
+    	    'nick'=>'昵称',
+    	    'sex'=>'性别',
+    	    'mobile'=>'手机',
+    	    'email'=>'邮箱',
+    	    'company'=>'分公司',
+    	   'password'=>'密码',
+    	    'password2'=>'确认密码'
     	];
     }
     /**

@@ -68,23 +68,31 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
         <?= $form->field($model, 'outer_link')->textInput(['maxlength' => 1024])->label('外部活动连接') ?>
           <?= $form->field($model, 'is_card_done')->dropDownList(['0'=>'否','1'=>'是'])->label('是否需要创建名片')?>
     </div>
-     <div class="hide"  >
-        <?= $form->field($model, 'signup_deny_template')->textInput(['maxlength' => 1024])->label('报名不通过模板消息标识') ?>
-        <?= $form->field($model, 'signup_pass_template')->textInput(['maxlength' => 1024])->label('报名通过模板消息标识') ?>
-          <?= $form->field($model, 'result_deny_template')->textInput(['maxlength' => 1024])->label('面试不通过模板消息标识')?>
-           <?= $form->field($model, 'result_pass_template')->textInput(['maxlength' => 1024])->label('面试通过模板消息标识')?>
-    </div>
+     
    
     <?= $form->field($model, 'province')->textInput(['maxlength' => 32]) ?>
 
     <?= $form->field($model, 'city')->textInput(['maxlength' => 32]) ?>
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => 258]) ?>
-
+	<?= $form->field($model, 'score')->textInput(['maxlength' => 258]) ?>
  
 
 </div>
 
+<div class="col-md-12">
+<div class="form-group" id="steps">
+         <h3>活动流程</h3>
+         <div class="form-group">
+         <p>第1步:</p>
+         <label class="">标题</label>
+         <input class="form-control" name="stepTitle[]" placeholder="请输入这一步的标题">
+         <label>描述</label>
+         <textarea class="form-control" rows="3" cols="" name="stepContent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>
+         </div>
+</div>
+<p><span class="red pull-right fa fa-plus" style="font-size:25px" id="add-step"></span></p>
+</div>
 <div class="col-md-12">
 <div class="form-group">
          <h3>活动介绍</h3>
@@ -193,5 +201,17 @@ function check(){
     showWaiting('正在提交,请稍候...');
     return true;
 }
+var step=1;
+$('#add-step').click(function(){
+	step +=1;
+  var html='<div class="form-group">\
+       <p>第'+step+'步:</p>\
+   <label class="">标题</label>\
+   <input class="form-control" name="stepTitle[]" placeholder="请输入这一步的标题">\
+   <label>描述</label>\
+   <textarea class="form-control" rows="3" cols="" name="stepContent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>\
+   </div>';
+  $('#steps').append(html);
+})
 
 </script>

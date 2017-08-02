@@ -1,137 +1,247 @@
 <?php
-use backend\assets\AppAsset;
+
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
-use frontend\assets\FlatlabAsset;
-use frontend\widgets\Alert;
+use common\widgets\Alert;
+use yii\helpers\Url;
+use backend\assets\AppAsset;
+use common\models\CommonUtil;
+
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 
 AppAsset::register($this);
+$this->registerCssFile('@web/css/common.css');
+$this->registerCssFile('@web/css/site.css');
+$this->registerJsFile('@web/js/common.js');
+$user=yii::$app->user->identity;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <meta charset="<?= Yii::$app->charset ?>"/>
+    <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/ionicons/2.0.1/css/ionicons.min.css">
+       <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<body class="hold-transition skin-purple sidebar-mini">
     <?php $this->beginBody() ?>
-    <div class="wrap">
-        <?php
-            NavBar::begin([
-                'brandLabel' => '链家优才微信公众号管理后台',
-                'brandUrl' => Yii::$app->homeUrl,
-                'options' => [
-                    'class' => 'navbar-inverse navbar-fixed-top',
-                ],
-            ]);
-            $menuItems[]='';
-            if (Yii::$app->user->isGuest) {
-                $menuItems[] = ['label' => '登录', 'url' => ['/site/login']];               
-            } elseif(Yii::$app->user->identity->role_id==99) {
-				$menuItems[] = [
-					'label' => '首页', 
-					'url' => ['/site/index'],
-				    'active'=>yii::$app->controller->id=='site'
-				];
-				$menuItems[] = [
-					'label' => '用户管理',
-					 'url' => ['/user/index'],
-				    'active'=>yii::$app->controller->id=='user'
-				];
-				$menuItems[] = [
-				    'label' => '名片管理',
-				    'url' => ['/card/index'],
-				    'active'=>yii::$app->controller->id=='card'
-				];
-				$menuItems[] = [
-				    'label' => '数据管理',
-				    'url' => ['/data/index'],
-				    'active'=>yii::$app->controller->id=='data'
-				];
-				$menuItems[] = [
-				    'label' => '评价管理',
-				    'url' => ['/eval/index'],
-				    'active'=>yii::$app->controller->id=='eval'
-				];
-// 				$menuItems[] = [
-// 				    'label' => '投票管理',
-// 				    'url' => ['/vote/index'],
-// 				    'active'=>yii::$app->controller->id=='vote'
-// 				];
-				$menuItems[] = [
-				'label' => '报名管理',
-				'url' => ['/activity/index'],
-				    'active'=>yii::$app->controller->id=='activity'
-				];		
-				$menuItems[] = [
-				    'label' => '任务管理',
-				    'url' => ['/task/index'],
-				    'active'=>yii::$app->controller->id=='task'
-				];
-				$menuItems[] = [
-				    'label' => 'MVP成长记录',
-				    'url' => ['/mvpgrow/index'],
-				    'active'=>yii::$app->controller->id=='mvpgrow'
-				];
-				$menuItems[] = [
-				    'label' => '问题反馈',
-				    'url' => ['/advice/index'],
-				    'active'=>yii::$app->controller->id=='advice'
-				];
-				$menuItems[] = [
-				    'label' => 'HM面试',
-				    'url' => ['/interview/index'],
-				    'active'=>yii::$app->controller->id=='interview'
-				];
-                $menuItems[] = [
-                    'label' => '注销 (' . yii::$app->user->identity->username. ')',
-                    'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ];
-				
-            }elseif (Yii::$app->user->identity->role_id==89 || Yii::$app->user->identity->role_id==88){
-                $menuItems[] = [
-                    'label' => 'HM面试',
-                    'url' => ['/interview-supervisor/index'],
-                    'active'=>yii::$app->controller->id=='interview-supervisor'
-                ];
-                $menuItems[] = [
-                    'label' => '注销 (' . yii::$app->user->identity->username. ')',
-                    'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ];
-            }
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => $menuItems,
-            ]);
-            NavBar::end();
-        ?>
+    <div class="wrapper">
+      <header class="main-header">
+        <!-- Logo -->
+        <a href="<?= Url::to(['site/index'])?>" class="logo">
+          <!-- mini logo for sidebar mini 50x50 pixels -->
+          <span class="logo-mini"><b>XVP</b></span>
+          <!-- logo for regular state and mobile devices -->
+          <span class="logo-lg"><b>XVP管理后台</b></span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+    
 
-        <div class="container">
-        <?= Breadcrumbs::widget([
+              <!-- User Account: style can be found in dropdown.less -->
+              <li class="dropdown user user-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <img src="<?= yii::getAlias('@avatar')?>/unknown.jpg " class="user-image" alt="User Image">
+                  <span class="hidden-xs"><?= yii::$app->user->identity->username?></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <!-- User image -->
+                  <li class="user-header">
+                    <img src="<?= yii::getAlias('@avatar')?>/unknown.jpg " class="img-circle" alt="User Image">
+                    <p>
+                    <?= yii::$app->user->identity->username?>
+                      <small><?= date("Y-m-d")?></small>
+                    </p>
+                  </li>
+                  <!-- Menu Body -->
+                  <li class="user-body">
+                  <div class="col-xs-6 text-center">
+                  <?php if($user->role_id==99){?>
+                      <a href="<?= Url::to(['user/index'])?>">用户管理</a>
+                    <?php }?>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                      <a href="<?= Url::to(['user/change-password'])?>">修改密码</a>
+                    </div>
+                    
+                  </li>
+                  <!-- Menu Footer-->
+                  <li class="user-footer">
+<!--                     <div class="pull-left"> -->
+<!--                       <a href="#" class="btn btn-default btn-flat"></a> -->
+<!--                     </div> -->
+                    <div class="pull-right">
+                       <?= Html::a('注销', ['site/logout'], [
+                                    'class'=>'btn btn-default btn-flat',
+                                    'data' => [
+                                        'method' => 'post',
+                                    ],
+                                ]) ?>
+
+                    </div>
+                  </li>
+                </ul>
+              </li>
+           
+            </ul>
+          </div>
+        </nav>
+      </header>
+      
+       <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- Sidebar user panel -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="<?=yii::getAlias('@avatar')?>/unknown.jpg" class="img-circle" alt="头像">
+            </div>
+            <div class="pull-left info">
+              <p><?= yii::$app->user->identity->username?></p>
+              <a href="#"><i class="fa fa-circle text-success"></i> <?= CommonUtil::getDescByValue('admin_user', 'role_id', $user->role_id)?></a>
+            </div>
+          </div>
+      
+    
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu">
+            <li class="<?php if(yii::$app->controller->id=='site'&&yii::$app->controller->action->id=='index') echo "active";?> treeview">
+              <a href="<?= Url::to(['site/index'])?>">
+                <i class="fa fa-home"></i> <span>首页</span>
+              </a>          
+            </li>
+            <?php if($user->role_id==99 ||$user->role_id==98){?>
+            <li class="<?php if(yii::$app->controller->id=='user') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-user"></i>
+                <span>用户管理</span>
+               <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['user/index'])?>"><i class="fa fa-circle-o"></i> 已验证用户</a></li>
+              <?php if($user->role_id==99){?>
+               <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='normal') echo "active";?>" ><a href="<?= Url::to(['user/normal'])?>"><i class="fa fa-circle-o"></i> 未验证用户</a></li>
+                <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='manager') echo "active";?>" ><a href="<?= Url::to(['user/manager'])?>"><i class="fa fa-circle-o"></i> 管理员</a></li>
+                <?php }?>
+                <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='group') echo "active";?>" ><a href="<?= Url::to(['user/group'])?>"><i class="fa fa-circle-o"></i> 用户分组</a></li>
+             	<li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='template-message') echo "active";?>" ><a href="<?= Url::to(['user/template-message'])?>"><i class="fa fa-circle-o"></i> 模板消息</a></li>
+              </ul>
+            </li>
+         
+            
+            <li class="<?php if(yii::$app->controller->id=='activity') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-pie-chart"></i>
+                <span>活动报名</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+               <ul class="treeview-menu">
+                <li class="<?php if(yii::$app->controller->id=='activity'&&yii::$app->controller->action->id=='activity') echo "active";?>" ><a href="<?= Url::to(['activity/index'])?>"><i class="fa fa-circle-o"></i> 活动列表</a></li>
+                 <li class="<?php if(yii::$app->controller->id=='activity'&&yii::$app->controller->action->id=='cate') echo "active";?>" ><a href="<?= Url::to(['activity/cate'])?>"><i class="fa fa-circle-o"></i> 活动分类</a></li>
+              </ul>
+            </li>
+            
+            <li class="<?php if(yii::$app->controller->id=='interview-result') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-reorder"></i>
+                <span>XVP360</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+               <ul class="treeview-menu">
+                <li class="<?php if(yii::$app->controller->id=='interview-result'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['interview-result/index'])?>"><i class="fa fa-circle-o"></i> 面试列表</a></li>
+              </ul>
+            </li>
+            
+              <li class="<?php if(yii::$app->controller->id=='data') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-money"></i>
+                <span>成长路径</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                  <li class="<?php if(yii::$app->controller->id=='data'&&yii::$app->controller->action->id=='index') echo "active";?>"><a href="<?= Url::to(['data/index'])?>"><i class="fa fa-circle-o"></i> 院校数据</a></li>
+                <li class="<?php if(yii::$app->controller->id=='data'&&yii::$app->controller->action->id=='test') echo "active";?>" ><a href="<?= Url::to(['data/test'])?>"><i class="fa fa-circle-o"></i> 测评数据</a></li>
+              </ul>
+            </li>
+           <?php }
+           
+           if($user->role_id==99 ||$user->role_id==89 || $user->role_id==88){?>
+           <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-money"></i>
+                <span>HM面试</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                  <li class="<?php if(yii::$app->controller->id=='interview-supervisor'&&yii::$app->controller->action->id=='interview-supervisor') echo "active";?>"><a href="<?= Url::to(['interview-supervisor/index'])?>"><i class="fa fa-circle-o"></i> HM面试</a></li>
+                 <li class="<?php if(yii::$app->controller->id=='interview-supervisor'&&yii::$app->controller->action->id=='interview-address') echo "active";?>" ><a href="<?= Url::to(['interview-supervisor/interview-address'])?>"><i class="fa fa-circle-o"></i> 面试地点</a></li>
+             	<li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='change-password') echo "active";?>" ><a href="<?= Url::to(['user/change-password'])?>"><i class="fa fa-circle-o"></i> 修改密码</a></li>
+              </ul>
+            </li>
+           <?php }?>
+           
+          </ul>
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+      
+
+        <div class="content-wrapper">
+        <section class="content-header">
+    
+         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+        <div class="clear"></div>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
         <?= Alert::widget() ?>
+        <div class="box box-success">
+
+    <div class="box-header width-border">
+        <div class="box-title" >
+            <?= Html::encode($this->title) ?>
+        </div>
+    </div>
+    <div class="box-body">
         <?= $content ?>
+        </div>
+        </div>
+        </section>
         </div>
     </div>
 
-    <div id="overlay">
+    
+        <div id="overlay">
             <div class="overlay-body">
             <p class="overlay-msg"></p>
             <i class="icon-spinner icon-spin icon-2x"></i>
             </div>
             
     </div>
+    
        <!-- 模态框（Modal） -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
    aria-labelledby="myModalLabel" aria-hidden="true">
@@ -157,13 +267,15 @@ AppAsset::register($this);
          </div>
       </div><!-- /.modal-content -->
 </div>
-		</div><!-- /.modal -->
-    <footer class="footer">
-        <div class="container">
-     
-        <p class="pull-right">链家优才公众号管理后台</p>
+	</div><!-- /.modal -->
+    
+
+     <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+          <b>e油网</b>
         </div>
-    </footer>
+        
+      </footer>
 
     <?php $this->endBody() ?>
 </body>

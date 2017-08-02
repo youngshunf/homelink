@@ -51,6 +51,10 @@ class ActivityController extends Controller
     {
         $searchModel = new SearchActivity();
         $searchModel->typeFlag=2;
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $searchModel->pid=$user->id;
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -152,7 +156,10 @@ class ActivityController extends Controller
             $model->sign_end_time=strtotime($model->sign_end_time);
             $model->sign_start_time=strtotime($model->sign_start_time);
             $model->year_month=date("Ym",$model->start_time);
-
+            $user=yii::$app->user->identity;
+            if($user->role_id==98){
+                $model->pid=$user->id;
+            }
             $photo=ImageUploader::uploadByName('photo');
             if($photo){
                 $model->path=$photo['path'];

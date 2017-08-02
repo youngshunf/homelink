@@ -14,9 +14,13 @@ use yii\widgets\ActiveForm;
 
 
     <?= $form->field($model, 'username',['enableAjaxValidation'=>true])->textInput(['maxlength' => 48]) ?>
-
-    <?= $form->field($model, 'role_id')->dropDownList([ '99' => '系统管理员','98'=>'财务管理员','97'=>'订单管理员' ,'96'=>'线路管理员'], ['prompt' => '']) ?>
+	<?= $form->field($model, 'company')->textInput(['maxlength' => 32]) ?>
+    <?= $form->field($model, 'role_id')->dropDownList([ '99' => '系统管理员','98'=>'普通管理员']) ?>
+    <?php if($model->isNewRecord){?>
 	<?= $form->field($model, 'password')->passwordInput(['maxlength' => 32]) ?>
+	<?= $form->field($model, 'password2')->passwordInput(['maxlength' => 32]) ?>
+	<?php }?>
+	
     <?= $form->field($model, 'real_name')->textInput(['maxlength' => 32]) ?>
 
     <?= $form->field($model, 'nick')->textInput(['maxlength' => 32]) ?>

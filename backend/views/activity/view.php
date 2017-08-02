@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel-white">
 
-    <h3><?= Html::encode($this->title) ?></h3>
 
     <p>
         <?= Html::a('修改', ['update', 'id' => $model->activity_id], ['class' => 'btn btn-primary']) ?>

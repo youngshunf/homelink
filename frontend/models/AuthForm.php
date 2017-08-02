@@ -55,6 +55,7 @@ class AuthForm extends Model
         $user->role_id=CommonUtil::getRoleId($authUser->role_name);
         $user->big_district=@$authUser->big_district;
         $user->business_district=@$authUser->business_district;
+        $user->pid=$authUser->pid;
         $user->shop=@$authUser->shop;
         $user->is_auth=1;
         $user->updated_at=time();
