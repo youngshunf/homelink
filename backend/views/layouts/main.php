@@ -31,12 +31,17 @@ $user=yii::$app->user->identity;
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+    <!-- 引入Vue -->
+    <script src="//vuejs.org/js/vue.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+    <!-- 引入组件库 -->
+    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="hold-transition skin-purple sidebar-mini">
+<body class="hold-transition skin-purple sidebar-mini" >
     <?php $this->beginBody() ?>
     <div class="wrapper">
       <header class="main-header">
@@ -157,7 +162,7 @@ $user=yii::$app->user->identity;
               </a>
                <ul class="treeview-menu">
                 <li class="<?php if(yii::$app->controller->id=='activity'&&yii::$app->controller->action->id=='activity') echo "active";?>" ><a href="<?= Url::to(['activity/index'])?>"><i class="fa fa-circle-o"></i> 活动列表</a></li>
-                 <li class="<?php if(yii::$app->controller->id=='activity'&&yii::$app->controller->action->id=='cate') echo "active";?>" ><a href="<?= Url::to(['activity/cate'])?>"><i class="fa fa-circle-o"></i> 活动分类</a></li>
+                
               </ul>
             </li>
             
@@ -172,20 +177,35 @@ $user=yii::$app->user->identity;
               </ul>
             </li>
             
-              <li class="<?php if(yii::$app->controller->id=='data') echo "active";?> treeview">
+              <li class="<?php if(yii::$app->controller->id=='task' || yii::$app->controller->id=='mvpgrow') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
                 <span>成长路径</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                  <li class="<?php if(yii::$app->controller->id=='data'&&yii::$app->controller->action->id=='index') echo "active";?>"><a href="<?= Url::to(['data/index'])?>"><i class="fa fa-circle-o"></i> 院校数据</a></li>
-                <li class="<?php if(yii::$app->controller->id=='data'&&yii::$app->controller->action->id=='test') echo "active";?>" ><a href="<?= Url::to(['data/test'])?>"><i class="fa fa-circle-o"></i> 测评数据</a></li>
+                  <li class="<?php if(yii::$app->controller->id=='task'&&yii::$app->controller->action->id=='index') echo "active";?>"><a href="<?= Url::to(['task/index'])?>"><i class="fa fa-circle-o"></i> 任务列表</a></li>
+                <li class="<?php if(yii::$app->controller->id=='mvpgrow'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['mvpgrow/index'])?>"><i class="fa fa-circle-o"></i> 成长路径</a></li>
+              </ul>
+            </li>
+            
+            <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
+              <a href="#">
+                <i class="fa fa-money"></i>
+                <span>HM面试</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                  <li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='index') echo "active";?>"><a href="<?= Url::to(['interview/index'])?>"><i class="fa fa-circle-o"></i> HM大区</a></li>
+                 <li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='appeal') echo "active";?>" ><a href="<?= Url::to(['interview/appeal'])?>"><i class="fa fa-circle-o"></i> 申诉处理</a></li>
+             	<li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='interview-photo') echo "active";?>" ><a href="<?= Url::to(['interview/interview-photo'])?>"><i class="fa fa-circle-o"></i> 面试照片</a></li>
+             	<li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='interview-address') echo "active";?>" ><a href="<?= Url::to(['interview/interview-address'])?>"><i class="fa fa-circle-o"></i> 面试地址</a></li>
+             	<li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='interview-data') echo "active";?>" ><a href="<?= Url::to(['interview/interview-data'])?>"><i class="fa fa-circle-o"></i> 大数据</a></li>
               </ul>
             </li>
            <?php }
            
-           if($user->role_id==99 ||$user->role_id==89 || $user->role_id==88){?>
+           if($user->role_id==89 || $user->role_id==88){?>
            <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
@@ -225,7 +245,7 @@ $user=yii::$app->user->identity;
             <?= Html::encode($this->title) ?>
         </div>
     </div>
-    <div class="box-body">
+    <div class="box-body" id="main">
         <?= $content ?>
         </div>
         </div>

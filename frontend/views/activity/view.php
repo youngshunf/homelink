@@ -123,8 +123,6 @@ img{
     <?php foreach ($districtList as $v){?>
     <li data-code="<?= $v->district_code?>" data-name="<?= $v->district_name?>"><a href="#"><?= $v->district_name?></a></li>
     <?php }?>
-   
-    
     </ul>
     </div>
      <div class="form-group center">

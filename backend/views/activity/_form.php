@@ -12,7 +12,14 @@ use yii\web\View;
 $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
 
 ?>
-
+<style>
+.step{
+	padding: 30px;
+    margin-bottom: 20px;
+    background: #f7f7f7;
+    border-radius: 5px;
+}
+</style>
 
 
     <?php $form = ActiveForm::begin(['id'=>'activity-form','options' => ['enctype' => 'multipart/form-data','onsubmit'=>'return check()']]); ?>
@@ -83,12 +90,19 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
 <div class="col-md-12">
 <div class="form-group" id="steps">
          <h3>活动流程</h3>
-         <div class="form-group">
+         <div class="form-group step">
          <p>第1步:</p>
          <label class="">标题</label>
-         <input class="form-control" name="stepTitle[]" placeholder="请输入这一步的标题">
+         <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" required>
+         <label class="">类型</label>
+         <select class="form-control" name="steptype[]">
+          <option value="0">淘汰</option>
+           <option value="1">通知</option>
+         </select>
+         <label class="">学分</label>
+         <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required>
          <label>描述</label>
-         <textarea class="form-control" rows="3" cols="" name="stepContent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>
+         <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>
          </div>
 </div>
 <p><span class="red pull-right fa fa-plus" style="font-size:25px" id="add-step"></span></p>
@@ -204,12 +218,19 @@ function check(){
 var step=1;
 $('#add-step').click(function(){
 	step +=1;
-  var html='<div class="form-group">\
+  var html='<div class="form-group step">\
        <p>第'+step+'步:</p>\
-   <label class="">标题</label>\
-   <input class="form-control" name="stepTitle[]" placeholder="请输入这一步的标题">\
+       <label class="">标题</label>\
+       <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" required>\
+       <label class="">类型</label>\
+       <select class="form-control" name="steptype[]">\
+        <option value="0">淘汰</option>\
+         <option value="1">通知</option>\
+       </select>\
+       <label class="">学分</label>\
+       <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required>\
    <label>描述</label>\
-   <textarea class="form-control" rows="3" cols="" name="stepContent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>\
+   <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>\
    </div>';
   $('#steps').append(html);
 })

@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('重置密码', ['reset-password', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => '您确定要重置密码吗?',
+                'confirm' => '密码将被重置为123456,您确定要重置密码吗?',
                 'method' => 'post',
             ],
         ]) ?>

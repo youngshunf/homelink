@@ -780,5 +780,9 @@ p.order-status-title{
 }
 
 .green{
-	color:green;
+	color:#00AE66;
+}
+
+.btn-success{
+	background:#00AE66 !important;
 }

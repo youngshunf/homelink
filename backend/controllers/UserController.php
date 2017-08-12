@@ -221,7 +221,7 @@ class UserController extends Controller
         $usersData=new ActiveDataProvider([
             'query'=>User::find()->andWhere(['group_id'=>0,'is_auth'=>1]),
             'pagination'=>[
-                'pagesize'=>20
+                'pagesize'=>50
             ]
         ]);
         
@@ -424,18 +424,11 @@ class UserController extends Controller
     
     //跳转至重置密码
     public function actionResetPassword($id){
-    	$userArr = User::findOne(["id"=>$id]);
-    	$reset = new ResetForm();
-  		if ($reset->load(Yii::$app->request->post())) {
-  			if ($reset->reset($userArr['user_guid'])) {
-  				return $this->redirect('index');
-  			}
-    	} else {
-    		return $this->render('reset', [
-    			'model' => $reset,
-    			'userArr' => $userArr,
-    		]);
-    	}
+    	$user = AdminUser::findOne(["id"=>$id]);
+    	$user->password=md5('123456');
+    	$user->save();
+    	yii::$app->getSession()->setFlash('success','操作成功，密码已重置为123456');
+    	return $this->redirect(yii::$app->request->referrer);
     }
     
     //导出excel

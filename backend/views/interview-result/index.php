@@ -13,7 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel-white">
 
-    <h5><?= Html::encode($this->title) ?></h5>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>

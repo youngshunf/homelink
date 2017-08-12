@@ -90,7 +90,7 @@ class AdminUser extends ActiveRecord implements IdentityInterface
     	    'sex'=>'性别',
     	    'mobile'=>'手机',
     	    'email'=>'邮箱',
-    	    'company'=>'分公司',
+    	    'company'=>'城市公司',
     	   'password'=>'密码',
     	    'password2'=>'确认密码'
     	];

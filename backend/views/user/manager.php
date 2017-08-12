@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	                     return  Html::a('修改 | ', $url, ['title' => '修改用户权限'] );
 					},		
 					'reset-password'=>function ($url,$model,$key){
-						return  Html::a('重置密码', $url, ['title' => '重置密码', 'data-confirm'=>'是否重置密码？'] );
+						return  Html::a('重置密码', $url, ['title' => '重置密码', 'data-confirm'=>'密码将被重置为123456,是否重置密码？'] );
 					},
 				]
            	], 

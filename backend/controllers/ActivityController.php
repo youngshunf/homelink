@@ -15,6 +15,8 @@ use common\models\ActivityRegister;
 use common\models\CommonUtil;
 use common\models\ImageUploader;
 use yii\filters\AccessControl;
+use common\models\ActivityStep;
+use common\models\ActivityQuestion;
 
 /**
  * ActivityController implements the CRUD actions for Activity model.
@@ -61,6 +63,83 @@ class ActivityController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+    
+    public function actionNextStep($activity_id)
+    {
+        $model=Activity::findOne($activity_id);
+        $maxSteps=ActivityStep::find()->andWhere(['activity_id'=>$activity_id])->count();
+        if($model->current_step==1&&$model->current_status==0){
+            $model->current_status=1;
+            ActivityStep::updateAll(['status'=>1],['activity_id'=>$activity_id,'step'=>$model->current_step]);
+            ActivityRegister::updateAll([
+                'current_status'=>'1',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['activity_id'=>$activity_id,'current_status'=>['0','1','2']]);
+            $model->save();
+        }elseif($maxSteps==$model->current_step && $model->current_status==1){
+            $model->current_status=2;
+            ActivityRegister::updateAll([
+                'current_status'=>'2',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['activity_id'=>$activity_id,'current_status'=>['0','1','2']]);
+            ActivityStep::updateAll(['status'=>2],['activity_id'=>$activity_id,'step'=>$model->current_step]);
+        }
+        else{
+            ActivityStep::updateAll(['status'=>2],['activity_id'=>$activity_id,'step'=>$model->current_step]);
+            ActivityRegister::updateAll([
+                'current_status'=>'2',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['activity_id'=>$activity_id,'current_status'=>['0','1','2']]);
+            $model->current_step +=1;
+            ActivityStep::updateAll(['status'=>1],['activity_id'=>$activity_id,'step'=>$model->current_step]);
+            ActivityRegister::updateAll([
+                'current_status'=>'1',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['activity_id'=>$activity_id,'current_status'=>['0','1','2']]);
+            $model->current_status=1;
+            $model->save();
+        }
+        return $this->redirect(yii::$app->request->referrer);
+    }
+    
+    public function actionStepDeny()
+    {
+        $activity_id=@$_POST['activity_id'];
+        $model=Activity::findOne($activity_id);
+        $keys=@$_POST['keys'];
+        
+        foreach ($keys as $v){
+           $register=ActivityRegister::findOne(['register_id'=>$v,'activity_id'=>$activity_id]);
+           $register->current_step=$model->current_step;
+           $register->current_type=$model->current_type;
+           $register->current_status=99;
+           $register->updated_at=time();
+           $register->save();
+        }
+       
+        return $this->redirect(yii::$app->request->referrer);
+    }
+    
+    public function actionStepPass()
+    {
+        $activity_id=@$_POST['activity_id'];
+        $model=ActivityStep::findOne($activity_id);
+        $keys=@$_POST['keys'];
+        foreach ($keys as $v){
+            $register=ActivityRegister::findOne(['id'=>$v,'activity_id'=>$activity_id]);
+            $register->current_step=$model->current_step;
+            $register->current_type=$model->current_type;
+            $register->current_status=2;
+            $register->updated_at=time();
+            $register->save();
+        }
+        
+        return $this->redirect(yii::$app->request->referrer);
     }
     
     public function actionExportRegister($activity_id){
@@ -130,7 +209,7 @@ class ActivityController extends Controller
         $dataProvider=new ActiveDataProvider([
             'query'=>ActivityRegister::find()->andWhere(['activity_id'=>$id])->orderBy('created_at desc'),
             'pagination'=>[
-                'pagesize'=>10
+                'pagesize'=>30
             ]
             
         ]);
@@ -138,6 +217,33 @@ class ActivityController extends Controller
             'model' => $this->findModel($id),
             'dataProvider'=>$dataProvider
         ]);
+    }
+    
+    public function actionEditQuestion($activity_id){
+        $model=Activity::findOne($activity_id);
+        $question=[];
+        if(!empty($model->question)){
+            $question=$model->question;
+        }
+        return $this->render('edit-question', [
+            'model' => $model,
+            'question'=>$question
+        ]);
+        
+    }
+    
+    public function actionSubmitQuestion(){
+        $activity_id=$_POST['activity_id'];
+        $content=@$_POST['content'];
+        $activity=Activity::findOne($activity_id);
+        $activity->question=json_encode($content);
+        $activity->updated_at=time();
+        if(!$activity->save()){
+            return 'fail';
+        }
+        
+        return $this->redirect(yii::$app->request->referrer);
+        
     }
     
 
@@ -172,6 +278,23 @@ class ActivityController extends Controller
             
             if(!$model->save()){
                 yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
+            }
+            $stepTitle=@$_POST['steptitle'];
+            $stepType=@$_POST['steptype'];
+            $stepScore=@$_POST['stepscore'];
+            $stepContent=@$_POST['stepcontent'];
+            foreach ($stepTitle as $k=>$v){
+                $step=new ActivityStep();
+                $step->activity_id=$model->activity_id;
+                $step->step=$k+1;
+                $step->title=$v;
+                $step->type=$stepType[$k];
+                $step->score=$stepScore[$k];
+                $step->content=$stepContent[$k];
+                $step->created_at=time();
+                if(!$step->save()){
+                    yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
+                }
             }
             return $this->redirect(['view', 'id' => $model->activity_id]);
         } else {
@@ -208,11 +331,28 @@ class ActivityController extends Controller
                 $model->photo=$photo['photo'];
             }
             
-            $model->content=$_POST['activity-content'];
+            $model->content=@$_POST['activity-content'];
             $model->updated_at=time();
             
             if(!$model->save()){
                 yii::$app->getSession()->setFlash('success','活动更新失败,请重试!');
+            }
+            $stepTitle=@$_POST['steptitle'];
+            $stepType=@$_POST['steptype'];
+            $stepScore=@$_POST['stepscore'];
+            $stepContent=@$_POST['stepcontent'];
+            foreach ($stepTitle as $k=>$v){
+                $step=new ActivityStep();
+                $step->activity_id=$model->activity_id;
+                $step->step=$k+1;
+                $step->title=$v;
+                $step->type=$stepType[$k];
+                $step->score=$stepScore[$k];
+                $step->content=$stepContent[$k];
+                $step->created_at=time();
+                if(!$step->save()){
+                    yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
+                }
             }
             return $this->redirect(['view', 'id' => $model->activity_id]);
         } else {

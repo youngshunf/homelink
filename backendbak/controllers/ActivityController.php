@@ -15,6 +15,7 @@ use common\models\ActivityRegister;
 use common\models\CommonUtil;
 use common\models\ImageUploader;
 use yii\filters\AccessControl;
+use common\models\ActivityStep;
 
 /**
  * ActivityController implements the CRUD actions for Activity model.
@@ -147,6 +148,8 @@ class ActivityController extends Controller
         $model = new Activity();
 
         if ($model->load(Yii::$app->request->post())  ) {
+            $stepTitle=@$_POST['steptitle'];
+            print_r($stepTitle);die;
             $model->start_time=strtotime($model->start_time);
             $model->end_time=strtotime($model->end_time);
             $model->sign_end_time=strtotime($model->sign_end_time);
@@ -164,14 +167,35 @@ class ActivityController extends Controller
             $model->created_at=time();
             
             if(!$model->save()){
+                
                 yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
             }
+            
+            $stepTitle=@$_POST['steptitle'];
+            print_r($stepTitle);die;
+            $stepType=@$_POST['steptype'];
+            $stepScore=@$_POST['stepscore'];
+            $stepContent=@$_POST['stepcontent'];
+            foreach ($stepTitle as $k=>$v){
+                $step=new ActivityStep();
+                $step->activity_id=$model->id;
+                $step->step=$k+1;
+                $step->title=$v;
+                $step->type=$stepType[k];
+                $step->score=$stepScore[k];
+                $step->content=$stepContent[k];
+                $step->created_at=time();
+                if(!$step->save()){
+                    yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
+                }
+            }
             return $this->redirect(['view', 'id' => $model->activity_id]);
-        } else {
+        } 
+        
             return $this->render('create', [
                 'model' => $model,
             ]);
-        }
+        
     }
 
     /**

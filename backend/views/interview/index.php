@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $searchModel common\models\SearchInterviewDistrict */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = '优才面试';
+$this->title = 'HM大区';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -34,10 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'options' => ['class' => 'grid-view','style'=>'overflow:auto', 'id' => 'grid'],
         'columns' => [
-//             [
-//             'class' => 'yii\grid\CheckboxColumn',
-//             'name' => 'id',
-//             ],
+            [
+            'class' => 'yii\grid\CheckboxColumn',
+            'name' => 'id',
+            ],
             ['class' => 'yii\grid\SerialColumn','header'=>'序号'],
             'district_code',
             'district_name',
