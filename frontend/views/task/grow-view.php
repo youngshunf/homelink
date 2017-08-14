@@ -29,10 +29,6 @@ $score=TaskResult::find()->andWhere(['work_number'=>$work_number])->sum('score')
 .wrap > .container {
   padding: 0;
 }
-h5{
-	color:green;
-	font-size:18px;
-}
 img{
 	display: block;
 	max-width:100%;
@@ -44,28 +40,24 @@ img{
 				<li class="mui-table-view-cell mui-media">
 						<img class="mui-media-object mui-pull-left" src="<?=$user->img_path?>">
 						<div class="mui-media-body">
-							<?php if(!empty($user->real_name)) echo '姓名:'.$user->real_name;?>
-							<p> 【工号】<?= $user->work_number?></p>
-							<p> 【电话】<?= $user->mobile?></p>
-							<p> 【业务区域】<?= $user->business_district?></p>
-							<p> 【负责店面】<?= $user->shop?></p>
+							<p><?php if(!empty($user->real_name)) echo '姓名:'.$user->real_name;?></p>
+							<p> 工号 : <?= $user->work_number?></p>
+							<p> 电话 : <?= $user->mobile?></p>
+							<p> 业务区域 : <?= $user->business_district?></p>
+							<p> 负责店面 : <?= $user->shop?></p>
+							<p> 总学分 :<span class="green"> <?= $score?> </span> </p>
 						</div>
 				</li>
 </ul>
 	
-	<h5>成长记录</h5>
 	<?php
      $growData=new ActiveDataProvider([
          'query'=>GrowthRec::find()->andWhere(['work_number'=>$work_number])->orderBy('item_time desc'),
      ]);
-	echo  GridView::widget([
-        'dataProvider' => $growData,
-        'columns' => [
-            'item_time',
-            'items',
-            'score',
-            'classname'
-        ],
+	echo  ListView::widget([
+	    'dataProvider'=>$growData,
+	    'itemView'=>'_growrec_item',
+	    'layout'=>"{items}\n{pager}"
     ]);?>
 	
 	<br>

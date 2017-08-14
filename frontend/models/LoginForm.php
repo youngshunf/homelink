@@ -1,97 +1,89 @@
 <?php
 namespace frontend\models;
 
-
-use yii;
+use Yii;
 use yii\base\Model;
-use common\models\User;
+
 use common\models\CommonUtil;
-use common\models\WeChat;
-use common\models\AuthUser;
-use yii\helpers\Json;
+use common\models\User;
+
 /**
- * 服务号登录
+ * Login form
  */
 class LoginForm extends Model
 {
+    public $username;
+    public $password;
+    public $rememberMe = true;
     
-    public function Login($code){
-     
-        $res=WeChat::getAccessTokenAndOpenid($code);  
-        $res=json_decode($res,true);
-        if(!empty($res['errcode'])){
+    private $_user = false;
+    
+    
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'password'], 'required'],
+            // rememberMe must be a boolean value
+            ['rememberMe', 'boolean'],
+            // password is validated by validatePassword()
+            ['password', 'validatePassword'],
+        ];
+    }
+    
+    public function validatePassword($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+            if (!$user) {
+                $this->addError($attribute, '用户名或密码错误.');
+            }
+//             else{
+//                 $login_time = time();
+//                 $login_ip = CommonUtil::getClientIp();
+//                 User::updateAll(array('last_ip'=>$login_ip,'last_time'=>$login_time),array('user_guid'=>$user['user_guid']));
+                
+//             }
+        }
+    }
+    
+    public function attributeLabels()
+    {
+        return [
+            'password2' => '确认密码',
+            'password' => '密码',
+            'mobile' => '手机号',
+            'email' => '邮箱',
+        ];
+    }
+    
+    /**
+     * Logs in a user using the provided username and password.
+     *
+     * @return boolean whether the user is logged in successfully
+     */
+    public function login()
+    {
+        if ($this->validate()) {
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        } else {
             return false;
         }
-        
-        $access_token=$res['access_token'];
-    
-        $openid=$res['openid'];
-        
-        $model=User::findOne(['openid'=>$openid]);
-        if(!empty($model)){
-            if( Yii::$app->user->login($model,3600 * 24)){
-                $_SESSION['user']=json_decode(Json::encode($model),true);
-                if($model->is_auth==1){
-                    if(empty($model->big_district)){
-                        $authUser=AuthUser::findOne(['work_number'=>$model->work_number]);
-                        if(!empty($authUser)){
-                            $model->big_district=@$authUser->big_district;
-                            $model->business_district=@$authUser->business_district;
-                            $model->shop=@$authUser->shop;
-                            $model->save();
-                            return true;
-                        }
-                    }
-                    return true;
-                }
-                return true;
-            }else{
-                return false;
-            }      
-        }
-        
-        $model=$this->Register($access_token,$openid);
-        if($model){
-            if(Yii::$app->user->login($model,3600 * 24)){
-                $_SESSION['user']=json_decode(Json::encode($model),true);
-                return true;
-            }
-                   
-        }   
-             
-        return false;
     }
     
-    public function Register($access_token,$openid){
-          
-        $userInfo=WeChat::getUserReturn($access_token, $openid);  
-     
-        $userInfo=json_decode($userInfo,true);        
-        if(!empty($userInfo['errcode'])){
-        return false;
-        } 
-         
-        $model=new User();
-        $model->user_guid=CommonUtil::createUuid();
-        $model->openid=$openid;
-        //处理昵称表情符号
-             $nick=$userInfo['nickname'];
-         $nick = preg_replace_callback('/[\xf0-\xf7].{3}/', function($r) { return "";}, $nick);
-         $model->nick=$nick;
-         $model->sex=$userInfo['sex'];
-         $model->city=$userInfo['city'];
-         $model->province=$userInfo['province'];
-         $model->country=$userInfo['country'];
-         $model->img_path=$userInfo['headimgurl'];
-        // $model->subscribe_time=$userInfo['subscribe_time']; 
-         $model->created_at=time();
-        if($model->save()){
-           return $model;
+    /**
+     * Finds user by [[username]]
+     *
+     * @return User|null
+     */
+    public function getUser()
+    {
+        if ($this->_user === false) {
+            $this->_user = User::findByUsername($this->username,md5($this->password));
         }
         
-        return false;
+        return $this->_user;
     }
-    
-   
-
 }

@@ -13,34 +13,23 @@ $commentCount=TaskResult::find()->andWhere(['task_id'=>$model->id,'business_dist
 }
 ?>
 
-<div class="mui-card" style="margin-bottom: 8px">	
 								<ul class="mui-table-view ">
-									<li class="mui-table-view-cell ">																																								
-										<p>【任务名称】 <?= $model->name?></p>										
-									</li>
 									<li class="mui-table-view-cell mui-media">
+									<a   href="<?= Url::to(['view','id'=>$model->id])?>">
+									<p class="bold b-padding"> <?= $model->name?></p>
 									<img alt="" src="<?= yii::getAlias('@photo').'/'.$model->path.'standard/'.$model->photo?>" class="img-responsive">
-										<p>【任务分值】<span class="red"><?=$model->score?></span></p>
-										<p>【完成标准】 <?=$model->standard?></p>
+										<p class="p-padding"> <?=$model->standard?></p>
+										
+										<p class="green">任务时间: <?= CommonUtil::fomatTime($model->start_time )?> - <?= CommonUtil::fomatTime($model->end_time )?> </p>
+									</a>
 									</li>	
 									
 								<?php if($user->role_id==3 || $user->role_id==4){ ?>
-								<li class="mui-table-view-cell">
+								 <li class="mui-table-view-cell">
 										<p>总共 <span class="red"><?= $resultCount?></span> 个MVP领取此任务,您已对 <span class="green"><?= $commentCount?></span>  个MVP进行了评分</p>
 									</li>
-									<li class="mui-table-view-cell">
-										<div class="center">
-										<a class="mui-btn mui-btn-primary"  href="<?= Url::to(['view','id'=>$model->id])?>">去评分</a>
-										</div>
-									</li>
-								<?php }elseif ($user->role_id==1){?>
-									<li class="mui-table-view-cell">
-										<div class="center">
-										<a class="mui-btn mui-btn-primary"  href="<?= Url::to(['view','id'=>$model->id])?>">领取任务</a>
-										</div>
-									</li>
-									<?php }?>																					
+								<?php }?>	
+																												
 								</ul>
-	</div>	
 
   

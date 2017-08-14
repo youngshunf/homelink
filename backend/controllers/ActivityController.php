@@ -162,6 +162,13 @@ class ActivityController extends Controller
         $resultExcel->getActiveSheet()->setCellValue('I1','是否签到');
         $resultExcel->getActiveSheet()->setCellValue('J1','签到时间');
         $resultExcel->getActiveSheet()->setCellValue('K1','签到人');
+        $question=$activity->question;
+        if(!empty($question)){
+            $question=json_decode($question,true);
+            foreach ($question as $k=>$v){
+                $resultExcel->getActiveSheet()->setCellValue(chr(76+$k).'1',$v['name']);
+            }
+        }
  
         $i=2;
         foreach ($model as $k=>$v){
@@ -176,6 +183,13 @@ class ActivityController extends Controller
             $resultExcel->getActiveSheet()->setCellValue('I'.$i,$v->is_sign==0?"否":"是");
             $resultExcel->getActiveSheet()->setCellValue('J'.$i,CommonUtil::fomatTime($v->sign_time));
             $resultExcel->getActiveSheet()->setCellValue('K'.$i,$v['manager']['real_name']);
+            $answer=$v->answer;
+            if(!empty($answer)){
+                $answer=json_decode($answer,true);
+                foreach ($answer as $m=>$n){
+                    $resultExcel->getActiveSheet()->setCellValue(chr(76+$m).$i,@$n['value']);
+                }
+            }
     
             $i++;
         }
@@ -219,11 +233,20 @@ class ActivityController extends Controller
         ]);
     }
     
+    public function actionViewAnswer($id)
+    {
+        $model=ActivityRegister::findOne($id);
+        return $this->render('view-answer', [
+            'model' => $model,
+        ]);
+    }
+    
     public function actionEditQuestion($activity_id){
         $model=Activity::findOne($activity_id);
-        $question=[];
+        $question='[]';
         if(!empty($model->question)){
             $question=$model->question;
+            
         }
         return $this->render('edit-question', [
             'model' => $model,
@@ -242,7 +265,7 @@ class ActivityController extends Controller
             return 'fail';
         }
         
-        return $this->redirect(yii::$app->request->referrer);
+        return $this->redirect(['view','id'=>$activity_id]);
         
     }
     
@@ -341,7 +364,11 @@ class ActivityController extends Controller
             $stepType=@$_POST['steptype'];
             $stepScore=@$_POST['stepscore'];
             $stepContent=@$_POST['stepcontent'];
+            ActivityStep::deleteAll(['activity_id'=>$model->activity_id]);
             foreach ($stepTitle as $k=>$v){
+                if(empty($v)){
+                    continue;
+                }
                 $step=new ActivityStep();
                 $step->activity_id=$model->activity_id;
                 $step->step=$k+1;

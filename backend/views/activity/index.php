@@ -29,7 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
            ['attribute'=>'scope','value'=>function ($model){
                return CommonUtil::getDescByValue('activity', 'scope', $model->scope);
            }],
-           ['attribute'=>'type','value'=>function ($model){
+           ['attribute'=>'type',
+               'filter'=>['0'=>'普通活动','1'=>'竞聘活动','2'=>'外部活动','3'=>'HM面试'],
+               'value'=>function ($model){
                return CommonUtil::getDescByValue('activity', 'type', $model->type);
            }],
             ['attribute'=>'start_time','value'=>function ($model){

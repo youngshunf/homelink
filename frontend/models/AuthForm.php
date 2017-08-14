@@ -13,6 +13,7 @@ class AuthForm extends Model
 {
     public $real_name;
     public $work_number;
+    public $mobile;
 
     /**
      * @inheritdoc
@@ -20,7 +21,8 @@ class AuthForm extends Model
     public function rules()
     {
         return [
-            [['real_name', 'work_number'], 'required'],
+            [['real_name', 'work_number','mobile'], 'required'],
+            
         ];
     }
     
@@ -28,7 +30,8 @@ class AuthForm extends Model
     {
         return [
             'real_name' => '姓名',
-            'work_number'=>'工号'    
+            'work_number'=>'工号',
+            'mobile'=>'手机号'
         ];
     }
 
@@ -52,6 +55,7 @@ class AuthForm extends Model
         $user=User::findOne(['user_guid'=>$use_guid]);
         $user->real_name=$this->real_name;
         $user->work_number=$this->work_number;
+        $user->mobile=$this->mobile;
         $user->role_id=CommonUtil::getRoleId($authUser->role_name);
         $user->big_district=@$authUser->big_district;
         $user->business_district=@$authUser->business_district;

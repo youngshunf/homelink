@@ -277,12 +277,22 @@ class UserController extends Controller
     }
     
     public function  actionAuthUser(){
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
         $dataProvider=new ActiveDataProvider([
-            'query' => AuthUser::find()->OrderBy("created_at desc"),
+            'query' => AuthUser::find()->andWhere(['pid'=>$user->id])->OrderBy("created_at desc"),
             'pagination' => [
                 'pageSize' => 20,
             ],
         ]);
+        }else{
+            $dataProvider=new ActiveDataProvider([
+                'query' => AuthUser::find()->OrderBy("created_at desc"),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+        }
         
         return $this->render('auth-user', [
             'dataProvider' => $dataProvider,
@@ -321,8 +331,9 @@ class UserController extends Controller
             $result = 0;
             $irecord = 0;
             //清空数据库
-           $sql="TRUNCATE TABLE auth_user";
-           yii::$app->db->createCommand($sql)->query();
+//            $sql="TRUNCATE TABLE auth_user";
+//            yii::$app->db->createCommand($sql)->query();
+            AuthUser::deleteAll(['pid'=>$user->id]);
             foreach ($sheetData as $record)
             {
                 $irecord++;
@@ -517,13 +528,20 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post()) ) {
+            if( $model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }else{
+                yii::$app->getSession()->setFlash('error','更新失败!');
+            }
+            
+        } 
+            $adminUser=AdminUser::findAll(['role_id'=>'98']);
             return $this->render('update', [
                 'model' => $model,
+                'adminUser'=>$adminUser
             ]);
-        }
+        
     }
 
     /**

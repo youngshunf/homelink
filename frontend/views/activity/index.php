@@ -13,19 +13,13 @@ use kartik\widgets\DatePicker;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '活动日历';
-$this->params['breadcrumbs'][] = $this->title;
-$this->registerCssFile('@web/css/timeline/default.css');
-$this->registerCssFile('@web/css/timeline/component.css');
-$this->registerCssFile('@web/css/timeline/common.css');
-$this->registerJsFile('@web/js/timeline.js');
-$this->registerJsFile('@web/js/jquery-1.9.1.js');
 $this->registerJsFile('@web/js/date.js');
-$this->registerJsFile('@web/js/iscroll.js');
 ?>
 <style>
-html,body{
-	background:#1E2A3F;
+.mui-table-view{
+	margin-bottom:10px
 }
+
 .wrap > .container {
   padding: 0;
 }
@@ -38,10 +32,7 @@ html,body{
 .row {
   margin-left: 0px; 
 }
-.panel-white {
-	padding:10px;
-	background:none;
-}
+
 a{
 	color:#000;
 }
@@ -50,23 +41,17 @@ a{
 	padding-top:8px;
 	border-top:1px solid grey;
 }
-.btn-success {
-  color: #fff !important;
-  background-color: #5cb85c !important;
-
-}
 </style>
-
-<div class="panel-white">
+<!-- 
 <form action="<?= Url::to(['search-time'])?>" method="post"  id="time-form">
     <div class="input-group">
     <input type="hidden" name="_csrf" value="<?= yii::$app->request->getCsrfToken()?>">  
          <input type="text"  class="form-control kbtn" name="time" id="time"  value="<?= $yearMonth?>">
-         <span class="input-group-addon btn btn-success" id="submit">确定</span>
+         <span class="input-group-addon btn btn-success" id="submit">搜索</span>
       </div>
       <div id="datePlugin"></div>
      </form>
-     
+ -->     
      <?php if(!empty($topData)){
      
          echo 
@@ -83,7 +68,6 @@ a{
            'layout'=>"{items}\n{pager}"
     ]); ?>
 
-</div>
 <script>
 $("#submit").click(function(){
 	if(!$("#time").val()){

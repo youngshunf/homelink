@@ -42,30 +42,36 @@ $this->params['breadcrumbs'][] = $this->title;
     		'work_number',
     		/* 'province',
     		'city', */
-            ['attribute'=>'用户角色','value'=>function ($model){
+            ['attribute'=>'role_id',
+                'filter'=>['9'=>'普通用户','1'=>'MVP','2'=>'商圈经理','3'=>'总监','4'=>'副总'],
+                'value'=>function ($model){
             	$role_id=$model->role_id;
             	return CommonUtil::getDescByValue('user', 'role_id', $role_id);
             }],
             'group.group_name',
             [	'class' => 'yii\grid\ActionColumn',
              	'header'=>'操作',
-            	'template'=>'{view}{delete}{sign-manager}',
+            	'template'=>'{view}{update}{delete}{sign-manager}',
 	             'buttons'=>[
 					'view'=>function ($url,$model,$key){
-	                     return  Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title' => '查看详细'] );
+	                     return  Html::a('查看 | ', $url, ['title' => '查看详细'] );
+					},
+					'update'=>function ($url,$model,$key){
+					return  Html::a('修改 | ', $url, ['title' => '修改'] );
+					},
+					'delete'=>function ($url,$model,$key){
+					return  Html::a('删除 | ', $url, ['title' => '删除用户', 'data-confirm'=>'是否确定删除该用户？'] );
 					},
 					'sign-manager'=>function ($url,$model,$key){
 					   if($model->is_sign_manager==0){
-					       return  Html::a('<span class="glyphicon glyphicon-ok"></span>', $url, ['title' => '设置为签到管理员', 'data-confirm'=>'是否将该用户设置为签到管理员,设置成功之后可扫码签到二维码进行签到？'] );					       
+					       return  Html::a('设置为签到管理员 ', $url, ['title' => '设置为签到管理员', 'data-confirm'=>'是否将该用户设置为签到管理员,设置成功之后可扫码签到二维码进行签到？'] );					       
 					   }
 					   if($model->is_sign_manager==1){
-					       return  Html::a('<span class="glyphicon glyphicon-remove"></span>', $url, ['title' => '取消签到管理员', 'data-confirm'=>'是否将该用户的签到管理员权限取消,取消之后将不可进行签到?'] );
+					       return  Html::a('取消签到管理员', $url, ['title' => '取消签到管理员', 'data-confirm'=>'是否将该用户的签到管理员权限取消,取消之后将不可进行签到?'] );
 					   }
 					   
-				},
-					'delete'=>function ($url,$model,$key){
-					return  Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, ['title' => '删除用户', 'data-confirm'=>'是否确定删除该用户？'] );
-					},
+				    },
+					
 					
 				]
            	],

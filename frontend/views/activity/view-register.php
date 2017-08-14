@@ -15,11 +15,7 @@ $this->registerCssFile('@web/css/jquery.fancybox.css');
 ?>
 <style>
 
-.content {
- 
-  padding: 8px;
-  background: rgba(255, 255, 255, 1);
-}
+
 .wrap > .container {
   padding: 0;
 }
@@ -34,10 +30,6 @@ img{
    <p><label class="label-control">工号:</label><?= $registerModel->work_number?></p>
    <p><label class="label-control">姓名:</label><?= $registerModel->name?></p>
    <p><label class="label-control">手机:</label><?= $registerModel->mobile?></p>
-   <?php if($model->type!=3){?>
-   <p><label class="label-control">邮箱:</label><?= $registerModel->email?></p>
-   <p><label class="label-control">微信:</label><?= $registerModel->weixin?></p>
-   <?php }?>
   <?php if($model->type==1){?>
   <p><label class="label-control">竞聘店面:</label><?= $registerModel->sign_shop?></p>
   <?php }?>
@@ -46,7 +38,7 @@ img{
   <p><label class="label-control">大区:</label><?= $registerModel->district_name?></p>
   <?php }?>
  
-  <?php if($model->type==3333){?>
+  <?php if($model->type==0 || $model->type==1){?>
   <div class="center">
   <label class="label-control"> 请让签到管理员扫码二维码进行签到</label>
   <a class="fancybox"  title="扫描二维码签到"  data-fancybox-group="gallery"  href="<?= yii::getAlias('@photo')?>/qrcode/sign/<?=$registerModel->sign_qrcode?>">
@@ -54,7 +46,8 @@ img{
     </a>   
   </div>
   <?php }?>
-  
+</div>
+<div class="content">  
   <h5>活动详情</h5>
   <div class="c_img">
             <img alt="<?= $model->title?>" src="<?= yii::getAlias('@photo').'/'.$model->path.'standard/'.$model->photo?>" class="img-responsive">
@@ -67,12 +60,13 @@ img{
   <p>【活动时间】<?= date("Y年m月d日",$model->start_time)?> <?= date("H:i",$model->start_time).'-'.date("H:i",$model->end_time)?></p>
     <p>【报名截止】<?= date("Y年m月d日 H:i",$model->sign_end_time)?></p>
     <p>【地点】<?= $model->address?></p>
-   <h3>活动介绍</h3>
-   <?= $model->content?>
-   
+ </div>
  
-   
-</div>
+ <div class="content">
+   <h5>活动介绍</h5>
+   <?= $model->content?>
+ </div>  
+ 
 <script>
 $(document).ready(function(){
 	$('.fancybox').fancybox({

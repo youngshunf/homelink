@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use kartik\widgets\DateTimePicker;
 use wenyuan\ueditor\Ueditor;
 use yii\web\View;
+use common\models\ActivityStep;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Activity */
@@ -67,7 +68,7 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
 </div>
 <div class="col-md-6">
 
-    <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','1'=>'竞聘活动','2'=>'外部活动','3'=>'优才面试']) ?>
+    <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','1'=>'竞聘活动','2'=>'外部活动','3'=>'HM面试']) ?>
     <div class="hide" id="shop" >
         <?= $form->field($model, 'shop')->textInput(['maxlength' => 1024])->label('竞聘店面(多个店面用英文,号分隔)') ?>
     </div>
@@ -82,18 +83,21 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
     <?= $form->field($model, 'city')->textInput(['maxlength' => 32]) ?>
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => 258]) ?>
-	<?= $form->field($model, 'score')->textInput(['maxlength' => 258]) ?>
  
 
 </div>
 
+
 <div class="col-md-12">
 <div class="form-group" id="steps">
          <h3>活动流程</h3>
+         <?php
+         $steps=ActivityStep::find()->andWhere(['activity_id'=>$model->activity_id])->orderBy('step asc')->all();
+         if($model->isNewRecord || count($steps)<=0){?>
          <div class="form-group step">
          <p>第1步:</p>
          <label class="">标题</label>
-         <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" required>
+         <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" >
          <label class="">类型</label>
          <select class="form-control" name="steptype[]">
           <option value="0">淘汰</option>
@@ -104,9 +108,29 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
          <label>描述</label>
          <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>
          </div>
+         <?php }else{
+         foreach ($steps as $v){
+             ?>
+         <div class="form-group step">
+         <p>第<?= $v->step?>步:</p>
+         <label class="">标题</label>
+         <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" value="<?= $v->title?>" >
+         <label class="">类型</label>
+         <select class="form-control" name="steptype[]" value="<?= $v->type?>">
+           <option value="0" <?= $v->type==0?'selected=selected':''?> >淘汰</option>
+           <option value="1" <?= $v->type==1?'selected=selected':''?>>通知</option>
+         </select>
+         <label class="">学分</label>
+         <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required value="<?= $v->score?>">
+         <label>描述</label>
+         <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"><?= $v->content?></textarea>
+         </div>
+         
+         <?php } }?>
 </div>
 <p><span class="red pull-right fa fa-plus" style="font-size:25px" id="add-step"></span></p>
 </div>
+
 <div class="col-md-12">
 <div class="form-group">
          <h3>活动介绍</h3>
@@ -215,7 +239,15 @@ function check(){
     showWaiting('正在提交,请稍候...');
     return true;
 }
+<?php if($model->isNewRecord){?>
 var step=1;
+<?php }else{
+$maxStep=ActivityStep::find()->andWhere(['activity_id'=>$model->activity_id])->max('step');
+    ?>
+var step =<?= $maxStep?>;
+
+<?php }?>
+
 $('#add-step').click(function(){
 	step +=1;
   var html='<div class="form-group step">\

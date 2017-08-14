@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="col-md-6">
         <p><b>姓名:</b><?=$model->real_name?></p>
+          <p><b>用户角色:</b><?=CommonUtil::getDescByValue('user', 'role_id', $model->role_id)?></p>
         <p><b>电话:</b><?=$model->mobile?></p>
         <p><b>邮箱:</b><?=$model->email?></p>
         <p><b>大区:</b><?=$model->district?></p>
@@ -38,7 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-md-12">
     <?= DetailView::widget([
         'model' => $model,
-        'attributes' => [        
+        'attributes' => [    
+            'age',
+            'talent',
             'business_circle',
             'building',
             'address',

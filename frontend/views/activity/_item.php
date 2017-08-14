@@ -6,35 +6,25 @@ use yii\helpers\Url;
 
 ?>
 
-    <ul class="cbp_tmtimeline">
-					<li>
-						<time class="cbp_tmtime" datetime=""><span><?= date("Y年m月",$model->start_time)?></span> <span><?= date("d",$model->start_time)?></span></time>
-						<?php if($model->sign_start_time<=time()&&time()<=$model->sign_end_time){?>
-						<div class="cbp_tmicon bg-green">正在进行</div>
-						<?php }elseif ($model->sign_end_time<time()){?>
-						<div class="cbp_tmicon  ">已结束</div>
-						<?php }elseif ($model->sign_start_time>time()){?>
-						<div class="cbp_tmicon  bg-red">尚未开始</div>
-						<?php }?>
-						<div class="cbp_tmlabel">
-						    <div class="row list-item">
+    <ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						
+						    <div class="row ">
                              <a href="<?= Url::to(['view','id'=>$model->activity_id])?>">
-                             <p class="bold"><?=$model['title']?>    </p>   
-                          <div class="col-xs-4">
-                            <img alt="" src="<?= yii::getAlias('@photo').'/'.$model->path.'thumb/'.$model->photo?>" class="img-responsive">
+                             <p class="bold b-padding" ><?=$model['title']?>    </p>   
+                          <div class="col-xs-12">
+                            <img alt="" src="<?= yii::getAlias('@photo').'/'.$model->path.'standard/'.$model->photo?>" class="img-responsive">
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-xs-12 p-padding">
                                 
-                             
-                                <p ><?=mb_substr(strip_tags($model['content']), 0,40,'utf-8')?>...</p>  
+                                <p ><?=mb_substr(strip_tags($model['content']), 0,80,'utf-8')?>...</p>  
                         
                             </div>
                              <div class="col-xs-12">
-                                  <p class="time">活动时间:<?= CommonUtil::fomatTime($model->start_time)?>- <?= date("H:i:s",$model->end_time)?></p>
+                                  <p class="green">活动时间:<?= CommonUtil::fomatTime($model->start_time)?>- <?= date("H:i:s",$model->end_time)?></p>
                                                              
                              </div>
                           </a>
-                            </div>
 						</div>
 					</li>
 		</ul>

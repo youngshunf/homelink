@@ -171,7 +171,7 @@ $this->registerCssFile('@web/css/mui.min.css');
       </div>
       
    
-   <div class="box box-primary">
+    <div class="box box-primary">
                 <div class="box-header with-border">
                   <p class="box-title">活动进度</p>
                   <div class="box-tools pull-right">
@@ -250,6 +250,15 @@ $this->registerCssFile('@web/css/mui.min.css');
            ['attribute'=>'签到人','value'=>function ($model){
                return $model['manager']['real_name'];
            }],
+           ['class' => 'yii\grid\ActionColumn','header'=>'操作',
+               'template'=>'{view-answer}',
+               'buttons'=>[
+                   'view-answer'=>function ($url,$model,$key){
+                   return Html::a('查看调研结果  ',$url);
+           },
+           
+           ],
+           ],
         ],
     ]); ?>
     <?php Pjax::end()?>

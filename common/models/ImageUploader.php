@@ -9,7 +9,7 @@ class ImageUploader{
      * @param string $name
      */
     public static function uploadByName($name){
-        $photoFile=UploadedFile::getInstanceByName('photo');
+        $photoFile=UploadedFile::getInstanceByName($name);
         if(empty($photoFile)){
             return false;
         }

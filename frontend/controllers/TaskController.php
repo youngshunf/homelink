@@ -58,6 +58,7 @@ class TaskController extends Controller
 //             return $this->redirect('task-result-list');
 //         }else
             
+      return $this->redirect(['task-list']);
        if ($role_id==1 || $role_id==4||$role_id==3){
             return $this->redirect(['task-list']);
         }else{
@@ -108,8 +109,9 @@ class TaskController extends Controller
    * @return Ambigous <string, string>
    */
   public function actionTaskList(){
+      $user=yii::$app->user->identity;
       $dataProvider=new ActiveDataProvider([
-          'query'=>Task::find()->orderBy('created_at desc')
+          'query'=>Task::find()->andWhere(['pid'=>['0',$user->pid]])->orderBy('created_at desc')
       ]);
   
       return $this->render('task-list',[

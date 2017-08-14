@@ -64,6 +64,8 @@ class ActivityController extends Controller
     {
         $searchModel = new SearchActivity();
         $searchModel->is_top=0;
+        $user=yii::$app->user->identity;
+        $searchModel->pid=['0',$user->pid];
         
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $yearMonth=date("Y-m");
@@ -189,12 +191,18 @@ class ActivityController extends Controller
            if(!file_exists($qrFile)){
                QrCode::png(yii::$app->urlManager->createAbsoluteUrl('activity/sign')."?activity_id=$id&work_number=$registerModel->work_number",$qrFile,Enum::QR_ECLEVEL_H,7);
            }
+           $registerModel->name=@$_POST['name'];
+           $registerModel->work_number=@$_POST['work_number'];
+           $registerModel->mobile=@$_POST['mobile'];
+           $registerModel->answer=@$_POST['answer'];
            $registerModel->activity_id=$id;
            $registerModel->user_guid=$user_guid;
            $registerModel->sign_qrcode=$qrName;
            if($registerModel->save()){
                yii::$app->getSession()->setFlash('success',"活动报名成功,请让管理员扫码你的二维码进行签到!");
                return $this->redirect(['view-register','id'=>$id]);
+           }else{
+               yii::$app->getSession()->setFlash('error',"提交失败,请重试!");
            }
        }
        

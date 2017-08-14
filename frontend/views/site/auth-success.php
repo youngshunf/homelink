@@ -6,7 +6,7 @@ $this->title = '身份验证成功';
 ?>
 <div class="panel-white">
 
-    <h3><?= Html::encode($this->title) ?></h3>
+    <h5><?= Html::encode($this->title) ?></h5>
 
     <div class="alert alert-success">
       <h2>身份验证成功！</h2>

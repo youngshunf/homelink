@@ -12,7 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel-white">
 
-    <h3><?= Html::encode($this->title) ?></h3>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
  <p>
         <?= Html::a('导出结果', ['export-result','id'=>$task_id], ['class' => 'btn btn-success']) ?>

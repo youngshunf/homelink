@@ -33,16 +33,16 @@ class ActivityRegister extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['work_number','name','mobile','email','weixin'], 'required'],
+//             [['work_number','name','mobile'], 'required'],
 /*             ['email','email'], */
-            ['mobile','match','pattern'=>'^[1][3-8]+\\d{9}$^','message'=>'请输入正确的手机号码'],
-            [['mobile'], 'string','max'=>11, 'min'=>11, 'tooLong'=>'手机号不能大于11位', 'tooShort'=>'手机号不能小于11位'],            
+//             ['mobile','match','pattern'=>'^[1][3-8]+\\d{9}$^','message'=>'请输入正确的手机号码'],
+//             [['mobile'], 'string','max'=>11, 'min'=>11, 'tooLong'=>'手机号不能大于11位', 'tooShort'=>'手机号不能小于11位'],            
         
-            [['user_guid'], 'string', 'max' => 48],
-            [['work_number', 'email'], 'string', 'max' => 32],
-            [['name'], 'string', 'max' => 64],
-            [['mobile'], 'string', 'max' => 20],
-            [['sign_shop'], 'string', 'max' => 256]
+//             [['user_guid'], 'string', 'max' => 48],
+//             [['work_number', 'email'], 'string', 'max' => 32],
+//             [['name'], 'string', 'max' => 64],
+//             [['mobile'], 'string', 'max' => 20],
+//             [['sign_shop'], 'string', 'max' => 256]
         ];
     }
 
@@ -64,7 +64,9 @@ class ActivityRegister extends \yii\db\ActiveRecord
             'created_at' => '报名时间',
         ];
     }
-    
+    public function getActivity(){
+        return $this->hasOne(Activity::className(), ['activity_id'=>'activity_id']);
+    }
     public function getManager(){
         return $this->hasOne(User::className(), ['user_guid'=>'sign_manager']);
     }

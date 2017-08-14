@@ -6,30 +6,31 @@ use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use common\models\TaskResult;
 use yii\widgets\ListView;
+use yii\web\View;
+use common\models\TaskStep;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Wish */
 
 $this->title = $model->name;
 $user=yii::$app->user->identity;
+$this->registerJsFile('@web/js/vue.min.js', ['position'=> View::POS_HEAD]);
+$this->registerJsFile('@web/js/iview.min.js', ['position'=> View::POS_HEAD]);
+$this->registerCssFile('@web/css/iview.css', ['position'=> View::POS_HEAD]);
+$steps=TaskStep::find()->andWhere(['task_id'=>$model->id])->orderBy('step asc')->all();
 ?>
 <style>
 
-.content {
-  padding: 8px;
-  background: rgba(255, 255, 255, 1);
-}
 .wrap > .container {
   padding: 0;
-}
-h5{
-	color:green;
-	font-size:18px;
 }
 img{
 	display: block;
 	max-width:100%;
 	height:auto;
+}
+#steps{
+	margin:20px
 }
 </style>
   <div class="c_img">
@@ -38,17 +39,34 @@ img{
             <?=$model['name']?>
             </div> 
     </div>
-<div class="content">
+  <div class="content">
   <h5><?=$model['name']?></h5>
   <p>【任务分值】<span class="red"><?= $model->score?></span></p>
     <p>【完成标准】<?= $model->standard?></p>
+  </div>
+   <div class="content">
     <h5>任务要求</h5>
    <?= $model->requirement?>
-   
+  </div>
+  
+  <div class="content">
+    <h5>任务进度</h5>
+  <div id="steps" >
+    <Steps :current="<?= $model->current_step-1?>" direction="vertical">
+    <?php foreach ($steps as $v){?>
+         <Step title="<?= CommonUtil::getDescByValue('step', 'status', $v->status)?>" content="<?= $v->content?>"></Step>
+     <?php }?>
+    </Steps>
+
+</div>  
+  </div>
+  
+  
     <?php if($user->role_id==1){
     $hadTask=TaskResult::findAll(['task_id'=>$model->id,'user_guid'=>$user->user_guid]);
     if(!empty($hadTask)){
         ?>
+     <div class="content">     
     <h5>领取历史</h5>
     <ul class="mui-table-view">
     <?php foreach ($hadTask as $v){?>
@@ -60,6 +78,7 @@ img{
     </li>
     <?php }?>
     </ul>
+    </div>
     <?php } }?>
     
     <?php if($user->role_id==3 || $user->role_id==4){
@@ -67,6 +86,7 @@ img{
         'query'=>TaskResult::find()->andWhere(['task_id'=>$model->id,'business_district'=>$user->business_district])->orderBy('created_at desc')
     ]);
         ?>
+        <div class="content"> 
         <h5>领取任务MVP列表</h5>
     <?= ListView::widget([
     'dataProvider'=>$dataProvider,
@@ -74,14 +94,14 @@ img{
     'layout'=>"{items}\n{pager}"
     ]
     );?>
-    
+    </div>
     <?php }?>
    
-</div>
+
 <?php if(!yii::$app->user->isGuest&&$user->role_id==1){
     ?>
 <div class="bottom-btn">
-    <a class="btn btn-success btn-block"  href="javascript:;" id="getTask">领取任务</a>
+    <a class="btn btn-success btn-block btn-lg"  href="javascript:;" id="getTask">领取任务</a>
 </div>
 
 <?php }?>
@@ -145,5 +165,19 @@ function check(){
 		showWaiting('正在提交,请稍候...');
 		return true;
 	}
-
+	
+new Vue({
+    el: '#steps',
+    data:function(){
+    },
+    created:function(){
+    },
+    computed:{
+    },
+    watch:{
+    },
+    methods:{
+   	
+      },
+})
  </script>

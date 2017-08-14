@@ -38,6 +38,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn','header'=>'操作',
             'template'=>'{view}{update}{delete}{task-result}{export-result}',
             'buttons'=>[
+                'view'=>function ($url,$model,$key){
+                return Html::a('查看 | ',$url);
+                },
+                'update'=>function ($url,$model,$key){
+                return Html::a('修改 | ',$url);
+                },
+                'delete'=>function ($url,$model,$key){
+                return Html::a('删除 | ',$url);
+                },
                 'task-result'=>function ($url,$model,$key){
                 return Html::a('查看结果 | ',$url);
                  },

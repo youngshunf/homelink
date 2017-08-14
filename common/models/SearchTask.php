@@ -18,7 +18,7 @@ class SearchTask extends Task
     public function rules()
     {
         return [
-            [['id', 'score', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'score', 'created_at', 'updated_at','pid'], 'integer'],
             [['name', 'standard', 'requirement', 'path', 'photo'], 'safe'],
         ];
     }
@@ -56,7 +56,7 @@ class SearchTask extends Task
         }
 
         $query->andFilterWhere([
-            'id' => $this->id,
+            'pid' => $this->pid,
             'score' => $this->score,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

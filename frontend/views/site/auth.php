@@ -12,21 +12,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-login">
   
 
-    <div class="row">
-    
-        <div class="col-xs-12">
         <div class="panel-white">
-        	  <h3><?= Html::encode($this->title) ?></h3>   			 
+        	  <h5><?= Html::encode($this->title) ?></h5>   			 
             <?php $form = ActiveForm::begin(['id' => 'auth-form']); ?>
                 <?= $form->field($model, 'real_name')->label('姓名') ?>
                 <?= $form->field($model, 'work_number')->textInput()->label('工号') ?>
-        
+        	    <?= $form->field($model, 'mobile')->textInput() ?>
              <div class="form-group center">
-                    <?= Html::submitButton('立即验证', ['class' => 'btn btn-primary ', 'name' => 'login-button']) ?>
+                    <?= Html::submitButton('立即验证', ['class' => 'btn btn-success btn-lg btn-block ', 'name' => 'login-button']) ?>
                 </div>
             <?php ActiveForm::end(); ?>
             </div>
-        </div>
-     
-    </div>
 </div>

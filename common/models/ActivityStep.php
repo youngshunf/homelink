@@ -57,4 +57,8 @@ class ActivityStep extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+    
+    public function getActivity(){
+        return $this->hasOne(Activity::className(), ['activity_id'=>'activity_id']);
+    }
 }

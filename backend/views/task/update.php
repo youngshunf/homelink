@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = '修改';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'group'=>$group
     ]) ?>
 
 </div>

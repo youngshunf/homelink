@@ -14,6 +14,8 @@ use common\models\TaskResult;
 use common\models\GrowthRec;
 use yii\web\UploadedFile;
 use common\models\CommonUtil;
+use common\models\UserGroup;
+use common\models\TaskStep;
 
 /**
  * TaskController implements the CRUD actions for Task model.
@@ -39,6 +41,11 @@ class TaskController extends Controller
     public function actionIndex()
     {
         $searchModel = new SearchTask();
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $searchModel->pid=$user->id;
+        }
+        
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -57,6 +64,51 @@ class TaskController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+    
+    public function actionNextStep($task_id)
+    {
+        $model=Task::findOne($task_id);
+        $maxSteps=TaskStep::find()->andWhere(['task_id'=>$task_id])->count();
+        if($model->current_step==1&&$model->current_status==0){
+            $model->current_status=1;
+            if(!$model->save()){
+                yii::$app->getSession()->setFlash('error','操作失败!');
+            }
+            TaskStep::updateAll(['status'=>1],['task_id'=>$task_id,'step'=>$model->current_step]);
+            TaskResult::updateAll([
+                'current_status'=>'1',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['task_id'=>$task_id,'current_status'=>['0','1','2']]);
+            $model->save();
+        }elseif($maxSteps==$model->current_step && $model->current_status==1){
+            $model->current_status=2;
+            TaskResult::updateAll([
+                'current_status'=>'2',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['task_id'=>$task_id,'current_status'=>['0','1','2']]);
+            TaskStep::updateAll(['status'=>2],['task_id'=>$task_id,'step'=>$model->current_step]);
+        }
+        else{
+            TaskStep::updateAll(['status'=>2],['task_id'=>$task_id,'step'=>$model->current_step]);
+            TaskResult::updateAll([
+                'current_status'=>'2',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['task_id'=>$task_id,'current_status'=>['0','1','2']]);
+            $model->current_step +=1;
+            TaskStep::updateAll(['status'=>1],['task_id'=>$task_id,'step'=>$model->current_step]);
+            TaskResult::updateAll([
+                'current_status'=>'1',
+                'current_step'=>$model->current_step,
+                'current_type'=>$model->current_type,
+            ],['task_id'=>$task_id,'current_status'=>['0','1','2']]);
+            $model->current_status=1;
+            $model->save();
+        }
+        return $this->redirect(yii::$app->request->referrer);
     }
     
     public function actionTaskResult($id){
@@ -190,18 +242,44 @@ class TaskController extends Controller
                 $model->path=$photo['path'];
                 $model->photo=$photo['photo'];
             }
-             
-            $model->requirement=$_POST['requirement'];
+            $user=yii::$app->user->identity;
+            if($user->role_id==98){
+                $model->pid=$user->id;
+            }
+             $model->start_time=strtotime($model->start_time);
+             $model->end_time=strtotime($model->end_time);
+            $model->requirement=@$_POST['requirement'];
             $model->created_at=time();
             if(  $model->save()){
+                $stepTitle=@$_POST['steptitle'];
+                $stepType=@$_POST['steptype'];
+                $stepScore=@$_POST['stepscore'];
+                $stepContent=@$_POST['stepcontent'];
+                foreach ($stepTitle as $k=>$v){
+                    $step=new TaskStep();
+                    $step->task_id=$model->id;
+                    $step->step=$k+1;
+                    $step->title=$v;
+                    $step->type=$stepType[$k];
+                    $step->score=$stepScore[$k];
+                    $step->content=$stepContent[$k];
+                    $step->created_at=time();
+                    if(!$step->save()){
+                        yii::$app->getSession()->setFlash('success','任务发布失败,请重试!');
+                    }
+                }
                 return $this->redirect(['view', 'id' => $model->id]);
+            }else{
+                yii::$app->getSession()->setFlash('error','提交失败!');
             }
             
-        } else {
+        } 
+            $group=UserGroup::find()->orderBy('created_at desc')->all();
             return $this->render('create', [
                 'model' => $model,
+                'group'=>$group
             ]);
-        }
+        
     }
 
     /**
@@ -220,17 +298,42 @@ class TaskController extends Controller
                 $model->path=$photo['path'];
                 $model->photo=$photo['photo'];
             }
-             
-            $model->requirement=$_POST['requirement'];
+            $model->start_time=strtotime($model->start_time);
+            $model->end_time=strtotime($model->end_time);
+            $model->requirement=@$_POST['requirement'];
             $model->updated_at=time();
             if(  $model->save()){
-            return $this->redirect(['view', 'id' => $model->id]);
+                $stepTitle=@$_POST['steptitle'];
+                $stepType=@$_POST['steptype'];
+                $stepScore=@$_POST['stepscore'];
+                $stepContent=@$_POST['stepcontent'];
+                TaskStep::deleteAll(['task_id'=>$model->id]);
+                foreach ($stepTitle as $k=>$v){
+                    if(empty($v)){
+                        continue;
+                    }
+                    $step=new TaskStep();
+                    $step->task_id=$model->id;
+                    $step->step=$k+1;
+                    $step->title=$v;
+                    $step->type=$stepType[$k];
+                    $step->score=$stepScore[$k];
+                    $step->content=$stepContent[$k];
+                    $step->created_at=time();
+                    if(!$step->save()){
+                        yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
+                    }
+                }
+              return $this->redirect(['view', 'id' => $model->id]);
+            }else{
+                yii::$app->getSession()->setFlash('error','提交失败!');
             }
-        } else {
+        } 
+            $group=UserGroup::find()->orderBy('created_at desc')->all();
             return $this->render('update', [
                 'model' => $model,
+                'group'=>$group
             ]);
-        }
     }
 
     /**

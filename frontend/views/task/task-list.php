@@ -10,13 +10,8 @@ use yii\widgets\ListView;
 $this->title="任务列表";
 ?>
 <style>
-.mui-table-view li:first-child {
-  position: relative;
-  overflow: hidden;
-  background: #EEEEF2;
-}
-.mui-table-view-cell {
-  padding: 5px 8px;
+.mui-table-view{
+	margin-bottom:10px
 }
 </style>
 

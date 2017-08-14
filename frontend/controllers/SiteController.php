@@ -11,6 +11,10 @@ use yii\filters\VerbFilter;
 
 use frontend\models\AuthForm;
 use common\models\WechatCallbackApi;
+use frontend\models\WechatLoginForm;
+use yii\widgets\ActiveForm;
+use yii\web\Response;
+use frontend\models\RegisterForm;
 
 /**
  * Site controller
@@ -34,7 +38,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                    'actions' => ['login','login-do','join-mvp','logout','index','mvp-lesson','error','wechat-api','test-get'],
+                    'actions' => ['login','login-do','join-mvp','logout','register','mvp-lesson','error','wechat-api','test-get'],
                     'allow' => true,
                     'roles' => ['?'],
                     ],
@@ -71,7 +75,7 @@ class SiteController extends Controller
 
     public function actionIndex()   
     {
-      return $this->render('index');
+      return $this->redirect(['/user']);
     }
     
     public function actionWechatApi(){
@@ -120,9 +124,9 @@ class SiteController extends Controller
            $model=new AuthForm();
            if($model->load(yii::$app->request->post())){
                if($model->AuthUser()){
-                   return $this->render('auth-success');
+                   return $this->redirect(['/user']);
                }else{
-                 
+                   
                    return $this->render('auth',['model'=>$model]);
                }
               
@@ -138,14 +142,24 @@ class SiteController extends Controller
     public function actionMvpLesson(){
         return  $this->render('mvp-lesson');
     }
-
+    
     public function actionLogin()
     {
-        $appid=yii::$app->params['appid'];
-        $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=http://mvp.homelink.com.cn/site/login-do&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-//         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=http://localhost/homelink/frontend/web/site/login-do&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-        return $this->redirect($url);
+        $model=new LoginForm();
+        
+        if($model->load(yii::$app->request->post())&&$model->login()){
+            return $this->goBack();
+        }
+        
+        return $this->render('login',['model'=>$model]);
     }
+
+//     public function actionLogin()
+//     {
+//         $appid=yii::$app->params['appid'];
+//         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=http://mvp.homelink.com.cn/site/login-do&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+//         return $this->redirect($url);
+//     }
     
     public function  actionLoginDo(){
         if(!isset($_GET['code'])){
@@ -153,7 +167,7 @@ class SiteController extends Controller
         }
         $code=$_GET['code'];
     
-        $model=new LoginForm();
+        $model=new WechatLoginForm();
         if($model->Login($code)){
             return $this->goBack();
         }else{
@@ -178,8 +192,35 @@ class SiteController extends Controller
     
     public function actionRegister(){
         
-    	
-    }    
+        $model = new RegisterForm();
+        
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+            
+        }elseif($model->load(Yii::$app->request->post())){
+            
+            if($model->register()){
+                $login=new LoginForm();
+                $login->username=$model->mobile;
+                $login->password=$model->password;
+                if($login->login()){
+                    yii::$app->getSession()->setFlash("success","注册成功!");
+                    return $this->goHome();
+                }
+                
+            }else{
+                yii::$app->getSession()->setFlash('error','注册失败!');
+            }
+            
+            
+        }
+        return $this->render('register', [
+            'model' => $model,
+        ]);
+        
+        
+    }
     
     public function actionSocial(){
         $openid=yii::$app->user->identity->openid;

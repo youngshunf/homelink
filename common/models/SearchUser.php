@@ -45,9 +45,6 @@ class SearchUser extends User
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination'=>[
-                'pagesize'=>10
-            ]
         ]);
 
         $this->load($params);
@@ -61,7 +58,7 @@ class SearchUser extends User
         $query->andFilterWhere([  
             'pid' => $this->pid,
             'is_auth' => $this->is_auth,
-            'mobile_verify' => $this->mobile_verify,
+            'role_id' => $this->role_id,
             'email_verify' => $this->email_verify,
             'isenable' => $this->isenable,
             'subscribe_time' => $this->subscribe_time,

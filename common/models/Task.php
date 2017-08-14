@@ -33,9 +33,9 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name','standard','score'], 'required'],
+            [['name','standard','start_time','end_time','group_id','score'], 'required'],
             [['requirement'], 'string'],
-            [['score', 'created_at', 'updated_at'], 'integer'],
+            [[ 'created_at', 'updated_at','pid'], 'integer'],
             [['name', 'standard'], 'string', 'max' => 255],
             [['path', 'photo'], 'string', 'max' => 128]
         ];
@@ -55,6 +55,8 @@ class Task extends \yii\db\ActiveRecord
             'count_exec'=>'做任务人数',
             'path' => 'Path',
             'photo' => 'Photo',
+            'start_time'=>'开始时间',
+            'end_time'=>'结束时间',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
         ];

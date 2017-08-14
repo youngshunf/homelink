@@ -33,7 +33,7 @@ class AuthUser extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at'], 'integer'],
+            [['created_at','pid'], 'integer'],
             [['name', 'big_district', 'business_district'], 'string', 'max' => 20],
             [['shop'], 'string', 'max' => 255],
             [['role_name', 'work_number', 'up_work_number'], 'string', 'max' => 32]

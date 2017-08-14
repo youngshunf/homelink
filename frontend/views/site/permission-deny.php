@@ -7,7 +7,7 @@ $this->title = '您没有权限';
 ?>
 <div class="panel-white">
 
-    <h3><?= Html::encode($this->title) ?></h3>
+    <h5><?= Html::encode($this->title) ?></h5>
 
     <div class="alert alert-danger">
       <h2>您没有权限访问此页面</h2>

@@ -9,6 +9,7 @@ use frontend\assets\FlatlabAsset;
 use common\models\Message;
 use frontend\widgets\Alert;
 use common\models\Wallet;
+use yii\helpers\Url;
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -44,13 +45,34 @@ AppAsset::register($this);
     <?php $this->beginBody() ?>
     <div class="wrap">      
         <div class="container">
+        <nav class="mui-bar mui-bar-tab ">
+			<a class="mui-tab-item btm-nav" href="#" data-id="1">活动</a>
+			<a class="mui-tab-item btm-nav" href="#" data-id="2">任务</a>
+			<a class="mui-tab-item btm-nav" href="#" data-id="3">个人中心</a>
+		</nav>
      
          <?= Alert::widget() ?>
         <?= $content ?>
        
         </div>
     </div>
-    
+     <script type="text/javascript">
+		$('.mui-bar').on('click','.btm-nav',function(){
+			var id=$(this).data('id');
+			switch (id){
+			case 1:
+				location.href="<?= Url::to(['activity/index'])?>";
+				break;
+			case 2:
+				location.href="<?= Url::to(['task/index'])?>";
+				break;
+    		case 3:
+    			location.href="<?= Url::to(['/user'])?>";
+    			break;
+			}
+			
+		});
+     </script>  
       <div id="overlay">
             <div class="overlay-body">
             <p class="overlay-msg"></p>

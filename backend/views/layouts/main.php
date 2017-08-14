@@ -148,6 +148,7 @@ $user=yii::$app->user->identity;
                <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='normal') echo "active";?>" ><a href="<?= Url::to(['user/normal'])?>"><i class="fa fa-circle-o"></i> 未验证用户</a></li>
                 <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='manager') echo "active";?>" ><a href="<?= Url::to(['user/manager'])?>"><i class="fa fa-circle-o"></i> 管理员</a></li>
                 <?php }?>
+                <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='auth-user') echo "active";?>" ><a href="<?= Url::to(['user/auth-user'])?>"><i class="fa fa-circle-o"></i> 验证名单</a></li>
                 <li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='group') echo "active";?>" ><a href="<?= Url::to(['user/group'])?>"><i class="fa fa-circle-o"></i> 用户分组</a></li>
              	<li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='template-message') echo "active";?>" ><a href="<?= Url::to(['user/template-message'])?>"><i class="fa fa-circle-o"></i> 模板消息</a></li>
               </ul>
@@ -166,14 +167,14 @@ $user=yii::$app->user->identity;
               </ul>
             </li>
             
-            <li class="<?php if(yii::$app->controller->id=='interview-result') echo "active";?> treeview">
+            <li class="<?php if(yii::$app->controller->id=='report') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-reorder"></i>
                 <span>XVP360</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
                <ul class="treeview-menu">
-                <li class="<?php if(yii::$app->controller->id=='interview-result'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['interview-result/index'])?>"><i class="fa fa-circle-o"></i> 面试列表</a></li>
+                <li class="<?php if(yii::$app->controller->id=='report'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['report/index'])?>"><i class="fa fa-circle-o"></i> 测评列表</a></li>
               </ul>
             </li>
             
@@ -189,7 +190,10 @@ $user=yii::$app->user->identity;
               </ul>
             </li>
             
-            <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
+           
+           <?php } ?>
+            <?php if($user->role_id==99){?>
+             <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
                 <span>HM面试</span>
@@ -203,9 +207,8 @@ $user=yii::$app->user->identity;
              	<li class="<?php if(yii::$app->controller->id=='interview'&&yii::$app->controller->action->id=='interview-data') echo "active";?>" ><a href="<?= Url::to(['interview/interview-data'])?>"><i class="fa fa-circle-o"></i> 大数据</a></li>
               </ul>
             </li>
-           <?php }
-           
-           if($user->role_id==89 || $user->role_id==88){?>
+            <?php }?>
+           <?php if($user->role_id==89 || $user->role_id==88){?>
            <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
