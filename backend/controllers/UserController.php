@@ -113,9 +113,14 @@ class UserController extends Controller
     }
     
     public function actionExportUser(){
+        $user=yii::$app->user->identity;
         if(empty($_POST['startTime'])||empty($_POST['endTime'])){
-             
-            $model=User::find()->andWhere(['is_auth'=>1])->orderBy('created_at desc')->all();
+             if($user->role_id=98){
+                 $model=User::find()->andWhere(['is_auth'=>1,'pid'=>$user->id])->orderBy('created_at desc')->all();
+             }else{
+                 $model=User::find()->andWhere(['is_auth'=>1])->orderBy('created_at desc')->all();
+             }
+           
         }else{
             $startTime=strtotime($_POST['startTime']);
             $endTime=strtotime($_POST['endTime']);
@@ -123,7 +128,12 @@ class UserController extends Controller
                 yii::$app->getSession()->setFlash('error','结束时间不能小于开始时间');
                 return $this->redirect(yii::$app->getRequest()->referrer);
             }
-            $model=User::find()->andWhere("is_auth=1 and created_at >$startTime and created_at <=$endTime")->orderBy("created_at desc")->all();
+            if($user->role_id==98){
+                $model=User::find()->andWhere("is_auth=1 and created_at >$startTime and created_at <=$endTime")->andWhere(['pid'=>$user->id])->orderBy("created_at desc")->all();
+            }else{
+                $model=User::find()->andWhere("is_auth=1 and created_at >$startTime and created_at <=$endTime")->orderBy("created_at desc")->all();
+            }
+            
         }
     
         if(empty($model)){

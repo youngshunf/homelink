@@ -249,7 +249,10 @@ $this->registerCssFile('@web/css/mui.min.css');
             'email',
             ['attribute'=>'当前环节','value'=>function ($model){
                 $step=ActivityStep::findOne(['activity_id'=>$model->activity_id,'step'=>$model->current_step]);
-                return $step->title;
+                if(!empty($step)){
+                    return $step->title;
+                }
+                
             }],  
             ['attribute'=>'当前状态','value'=>function ($model){
                 return CommonUtil::getDescByValue('step','status',$model->current_status);
@@ -263,9 +266,7 @@ $this->registerCssFile('@web/css/mui.min.css');
            ['attribute'=>'签到时间','value'=>function ($model){
                return CommonUtil::fomatTime($model->sign_time);
            }],
-           ['attribute'=>'签到人','value'=>function ($model){
-               return $model['manager']['real_name'];
-           }],
+         
            ['class' => 'yii\grid\ActionColumn','header'=>'操作',
                'template'=>'{view-answer}',
                'buttons'=>[

@@ -67,7 +67,7 @@ $user=yii::$app->user->identity;
      
 </div>
 <div class="col-md-6">
-   <?php if($user->id==9336){?>
+   <?php if($user->id==9696){?>
       <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','2'=>'外部活动','3'=>'HM面试']) ?>
     <?php }else{?>
       <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','2'=>'外部活动']) ?>
