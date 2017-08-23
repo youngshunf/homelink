@@ -333,7 +333,11 @@ class UserController extends Controller
             //清空数据库
 //            $sql="TRUNCATE TABLE auth_user";
 //            yii::$app->db->createCommand($sql)->query();
-            AuthUser::deleteAll(['pid'=>$user->id]);
+//                if($user->role_id==98){
+//                 AuthUser::deleteAll(['pid'=>$user->id]);
+//                }
+               $role_id=$user->role_id;
+               $userid=$user->id;
             foreach ($sheetData as $record)
             {
                 $irecord++;
@@ -342,10 +346,11 @@ class UserController extends Controller
               }
              
             $authUser=new AuthUser();
-            if($user->role_id==98){
-             $authUser->pid=$user->id;
+            if($role_id==98){
+                $authUser->pid=$userid;
             }
             $authUser->work_number=trim($record['A']);
+            AuthUser::deleteAll(['work_number'=>$authUser->work_number]);
             $authUser->name=trim($record['B']);
              $authUser->big_district=trim($record['C']);
              $authUser->business_district=trim($record['D']);
@@ -557,6 +562,14 @@ class UserController extends Controller
         return $this->redirect(['index']);
     }
     
+    public function actionDeleteAuthuser($id)
+    {
+        AuthUser::findOne($id)->delete();
+        yii::$app->getSession()->setFlash('success','删除成功!');
+        
+        return $this->redirect(yii::$app->request->referrer);
+    }
+    
     
     public function actionDeleteNormal($id)
     {
@@ -672,7 +685,13 @@ class UserController extends Controller
             return $this->redirect(['view-template','id'=>$model->id]);
             }
         }else{
-            $group=UserGroup::find()->orderBy('created_at desc')->all();
+            $user=yii::$app->user->identity;
+            if($user->role_id==98){
+                $group=UserGroup::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc')->all();
+            }else{
+                $group=UserGroup::find()->orderBy('created_at desc')->all();
+            }
+            
             return $this->render('create-template',[
                 'model'=>$model,
                 'group'=>$group
@@ -734,6 +753,11 @@ class UserController extends Controller
         Template::findOne($id)->delete();
        return $this->redirect('template-message');
     }
+    
+    public function actionTemplate(){
+        return $this->render('template');
+    }
+    
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

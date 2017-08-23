@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\web\IdentityInterface;
 use yii\base\NotSupportedException;
+use backend\models\AdminUser;
 
 /**
  * This is the model class for table "user".
@@ -122,6 +123,10 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     
     public function getGroup(){
         return $this->hasOne(UserGroup::className(), ['id'=>'group_id']);
+    }
+    
+    public function getPuser(){
+        return $this->hasOne(AdminUser::className(), ['id'=>'pid']);
     }
     /**
      * @inheritdoc

@@ -10,7 +10,7 @@ html,body{
     padding: 0 0 60px;
 }
 p{
-	color:#333 !important;
+	color:#333 ;
 }
 
 .step{
@@ -448,4 +448,10 @@ margin-top: 15px;
 }
 .login-page, .register-page {
     background: #27A187;
+}
+.main-sidebar .user-panel{
+	min-height:80px
+}
+.user-panel>.info>p{
+	color:#fff;
 }

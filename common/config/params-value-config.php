@@ -7,6 +7,8 @@ return [
     'user.role_id.89'=>'大区总监',
     'user.role_id.88'=>'大区助理',
     'user.role_id.9'=>'普通用户',
+    'user.role_id.6'=>'DVP',
+    'user.role_id.5'=>'SVP',
     'user.role_id.4'=>'副总',
 	'user.role_id.3'=>'总监',
 	'user.role_id.2'=>'商圈经理',

@@ -26,12 +26,16 @@ $this->params['breadcrumbs'][] = $this->title;
    <?php }?>
     </div>
     <div class="col-md-6">
+         <p><b>用户名:</b><?=$model->username?></p>
         <p><b>姓名:</b><?=$model->real_name?></p>
           <p><b>用户角色:</b><?=CommonUtil::getDescByValue('user', 'role_id', $model->role_id)?></p>
         <p><b>电话:</b><?=$model->mobile?></p>
         <p><b>邮箱:</b><?=$model->email?></p>
         <p><b>大区:</b><?=$model->district?></p>
         <p><b>店面:</b><?=$model->shop?></p>
+        <?php if($model->puser){?>
+        <p><b>城市公司:</b><?=$model->puser->company?></p>
+        <?php }?>
     </div>
     </div>
     <br>

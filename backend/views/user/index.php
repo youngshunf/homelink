@@ -40,8 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
     		    return CommonUtil::getDescByValue('user', 'sex', $model->sex);
     		}], */
     		'work_number',
-    		/* 'province',
-    		'city', */
+            ['attribute'=>'puser.company',
+               'label'=>'城市公司'
+              ],
             ['attribute'=>'role_id',
                 'filter'=>['9'=>'普通用户','1'=>'MVP','2'=>'商圈经理','3'=>'总监','4'=>'副总'],
                 'value'=>function ($model){

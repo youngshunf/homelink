@@ -11,7 +11,7 @@ use common\models\ActivityStep;
 /* @var $model common\models\Activity */
 /* @var $form yii\widgets\ActiveForm */
 $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
-
+$user=yii::$app->user->identity;
 ?>
 <style>
 .step{
@@ -30,7 +30,7 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
 
 <div class="row">   
 <div class="col-md-6">
-    <?= $form->field($model, 'scope')->dropDownList(['0'=>'所有人','1'=>'MVP','2'=>'商圈经理','3'=>'总监'])?>
+    <?= $form->field($model, 'scope')->dropDownList(['0'=>'所有人','1'=>'MVP','5'=>'SVP','6'=>'DVP','2'=>'商圈经理','3'=>'总监'])?>
 
    <?= $form->field($model, 'max_number')->textInput() ?>
 
@@ -67,8 +67,11 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
      
 </div>
 <div class="col-md-6">
-
-    <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','1'=>'竞聘活动','2'=>'外部活动','3'=>'HM面试']) ?>
+   <?php if($user->id==9336){?>
+      <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','2'=>'外部活动','3'=>'HM面试']) ?>
+    <?php }else{?>
+      <?= $form->field($model, 'type')->dropDownList(['0'=>'普通活动','2'=>'外部活动']) ?>
+    <?php }?>
     <div class="hide" id="shop" >
         <?= $form->field($model, 'shop')->textInput(['maxlength' => 1024])->label('竞聘店面(多个店面用英文,号分隔)') ?>
     </div>
@@ -99,14 +102,18 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
          <label class="">标题</label>
          <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" >
          <label class="">类型</label>
-         <select class="form-control" name="steptype[]">
+         <select class="form-control steptype" name="steptype[]">
           <option value="0">淘汰</option>
            <option value="1">通知</option>
          </select>
          <label class="">学分</label>
          <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required>
-         <label>描述</label>
+         <label>通知</label>
          <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>
+         <div class=" denydesc">
+         <label>淘汰通知</label>
+         <textarea class="form-control" rows="3" cols="" name="denydesc[]"  placeholder="请输入这一步的淘汰通知,如该环节为通知类型，可以不填"></textarea>
+         </div>
          </div>
          <?php }else{
          foreach ($steps as $v){
@@ -122,10 +129,13 @@ $this->registerJsFile('@web/js/lrz.bundle.js', ['position'=> View::POS_HEAD]);
          </select>
          <label class="">学分</label>
          <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required value="<?= $v->score?>">
-         <label>描述</label>
+         <label>通知</label>
          <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"><?= $v->content?></textarea>
+         <div class=" denydesc">
+         <label>淘汰通知</label>
+         <textarea class="form-control" rows="3" cols="" name="denydesc[]"  placeholder="请输入这一步的淘汰通知,如该环节为通知类型，可以不填"><?= $v->deny_desc?></textarea>
          </div>
-         
+         </div>
          <?php } }?>
 </div>
 <p><span class="red pull-right fa fa-plus" style="font-size:25px" id="add-step"></span></p>
@@ -255,16 +265,27 @@ $('#add-step').click(function(){
        <label class="">标题</label>\
        <input class="form-control" name="steptitle[]" placeholder="请输入这一步的标题" required>\
        <label class="">类型</label>\
-       <select class="form-control" name="steptype[]">\
+       <select class="form-control steptype" name="steptype[]">\
         <option value="0">淘汰</option>\
          <option value="1">通知</option>\
        </select>\
        <label class="">学分</label>\
        <input class="form-control" name="stepscore[]" placeholder="请输入这一步的学分" required>\
-   <label>描述</label>\
+   <label>通知</label>\
    <textarea class="form-control" rows="3" cols="" name="stepcontent[]"  placeholder="请输入这一步的描述,如时间，地点，联系人，注意事项"></textarea>\
-   </div>';
+   <div class="denydesc">\
+   <label>淘汰通知</label>\
+   <textarea class="form-control" rows="3" cols="" name="denydesc[]"  placeholder="请输入这一步的淘汰通知,如该环节为通知类型，可以不填"></textarea>\
+   </div></div>';
   $('#steps').append(html);
 })
+
+$(document).on('change','.steptype',function(){
+   var type=$(this).val();
+   if(type==0){
+
+   }
+})
+
 
 </script>

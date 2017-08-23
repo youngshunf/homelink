@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 use common\models\TaskStep;
 use common\models\CommonUtil;
 use yii\helpers\Url;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */

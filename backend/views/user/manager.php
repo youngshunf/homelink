@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn','header'=>'序号'],
             'username',
             'real_name',
+            'company',
             ['attribute'=>'role_id','value'=>function ($model){
             	$role_id=$model->role_id;
             	return CommonUtil::getDescByValue('admin_user', 'role_id', $role_id);

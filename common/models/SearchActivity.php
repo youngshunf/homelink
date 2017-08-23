@@ -13,13 +13,14 @@ use common\models\Activity;
 class SearchActivity extends Activity
 {
     public $typeFlag=0;
+    public $pFlag;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['activity_id', 'scope', 'type','pid','score', 'start_time', 'end_time', 'max_number', 'sign_end_time', 'created_at', 'updated_at'], 'integer'],
+            [['activity_id', 'scope', 'type','pid','pFlag' ,'score', 'start_time', 'end_time', 'max_number', 'sign_end_time', 'created_at', 'updated_at'], 'integer'],
             [['title', 'content', 'path', 'photo', 'province', 'city', 'address', 'shop','is_top'], 'safe'],
         ];
     }
@@ -64,11 +65,16 @@ class SearchActivity extends Activity
         }elseif($this->typeFlag==1){
             $query->andWhere(" type=1 or type=3");
         }
+        
+        if($this->pFlag==1){
+            $query->andWhere("pid=0 or pid=".$this->pid);
+        }elseif($this->pFlag==0){
+            $query->andWhere(['pid'=>$this->pid]);
+        }
 
         $query->andFilterWhere([
             'activity_id' => $this->activity_id,
             'is_top'=>$this->is_top,
-            'pid'=>$this->pid,
             'score'=>$this->score,
             'scope' => $this->scope,
             'type' => $this->type,

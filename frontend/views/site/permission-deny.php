@@ -10,11 +10,11 @@ $this->title = '您没有权限';
     <h5><?= Html::encode($this->title) ?></h5>
 
     <div class="alert alert-danger">
-      <h2>您没有权限访问此页面</h2>
+      <h4>您没有权限访问此页面</h4>
       <div class="center">
       
      
-      <a class="btn btn-info" href="<?= yii::$app->request->referrer?>">返回</a>
+      <a class="btn btn-success" href="<?= yii::$app->request->referrer?>">返回</a>
       
       </div>
     </div>

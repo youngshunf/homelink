@@ -9,9 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $model common\models\Wish */
 
 $this->title = $model->title;
-$this->registerJsFile('@web/js/jquery-1.8.3.min.js');
-$this->registerJsFile('@web/js/jquery.fancybox.js');
-$this->registerCssFile('@web/css/jquery.fancybox.css');
+
 ?>
 <style>
 
@@ -38,14 +36,7 @@ img{
   <p><label class="label-control">大区:</label><?= $registerModel->district_name?></p>
   <?php }?>
  
-  <?php if($model->type==0 || $model->type==1){?>
-  <div class="center">
-  <label class="label-control"> 请让签到管理员扫码二维码进行签到</label>
-  <a class="fancybox"  title="扫描二维码签到"  data-fancybox-group="gallery"  href="<?= yii::getAlias('@photo')?>/qrcode/sign/<?=$registerModel->sign_qrcode?>">
-            <img alt="签到二维码" src="<?= yii::getAlias('@photo')?>/qrcode/sign/<?=$registerModel->sign_qrcode?>" class="img-responsive">
-    </a>   
-  </div>
-  <?php }?>
+ 
 </div>
 <div class="content">  
   <h5>活动详情</h5>
@@ -67,10 +58,4 @@ img{
    <?= $model->content?>
  </div>  
  
-<script>
-$(document).ready(function(){
-	$('.fancybox').fancybox({
-		closeClick : true,
-	});
-});
-</script>
+

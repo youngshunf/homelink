@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 /* @var $form yii\widgets\ActiveForm */
+$user=yii::$app->user->identity;
 ?>
 
 <div class="user-form">
@@ -15,8 +16,10 @@ use yii\helpers\ArrayHelper;
 
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => 48]) ?>
+    <?php if($user->role_id==99){?>
 	<?= $form->field($model, 'pid')->dropDownList(ArrayHelper::map($adminUser, 'id', 'company'),['prompt'=>'无','prompt_val'=>'0']) ?>
-    <?= $form->field($model, 'role_id')->dropDownList([ '9' => '普通用户','1'=>'MVP','2'=>'商圈经理','3'=>'总监','4'=>'副总']) ?>
+    <?php }?>
+    <?= $form->field($model, 'role_id')->dropDownList([ '9' => '普通用户','1'=>'MVP','5'=>'SVP','6'=>'DVP','2'=>'商圈经理','3'=>'总监','4'=>'副总']) ?>
        <?= $form->field($model, 'talent')->dropDownList([ 'MVP' => 'MVP','DVP'=>'DVP','SVP'=>'SVP']) ?>
     <?php if($model->isNewRecord){?>
 	<?= $form->field($model, 'password')->passwordInput(['maxlength' => 32]) ?>
@@ -32,6 +35,7 @@ use yii\helpers\ArrayHelper;
     <?= $form->field($model, 'mobile')->textInput(['maxlength' => 20]) ?>
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 48]) ?>
+    
 
 
     <div class="form-group">

@@ -31,12 +31,6 @@ $user=yii::$app->user->identity;
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <!-- 引入Vue -->
-    <script src="//vuejs.org/js/vue.min.js"></script>
-    <!-- 引入样式 -->
-    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
-    <!-- 引入组件库 -->
-    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -123,6 +117,7 @@ $user=yii::$app->user->identity;
             </div>
             <div class="pull-left info">
               <p><?= yii::$app->user->identity->username?></p>
+              <p><?= yii::$app->user->identity->company?></p>
               <a href="#"><i class="fa fa-circle text-success"></i> <?= CommonUtil::getDescByValue('admin_user', 'role_id', $user->role_id)?></a>
             </div>
           </div>
@@ -220,6 +215,16 @@ $user=yii::$app->user->identity;
                  <li class="<?php if(yii::$app->controller->id=='interview-supervisor'&&yii::$app->controller->action->id=='interview-address') echo "active";?>" ><a href="<?= Url::to(['interview-supervisor/interview-address'])?>"><i class="fa fa-circle-o"></i> 面试地点</a></li>
              	<li class="<?php if(yii::$app->controller->id=='user'&&yii::$app->controller->action->id=='change-password') echo "active";?>" ><a href="<?= Url::to(['user/change-password'])?>"><i class="fa fa-circle-o"></i> 修改密码</a></li>
               </ul>
+            </li>
+           <?php }?>
+           
+           <?php if($user->role_id==99 || $user->role_id==98){?>
+           <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> ">
+              <a href="<?= Url::to(['user/template'])?>">
+                <i class="fa fa-list"></i>
+                <span>模板下载</span>
+              </a>
+             
             </li>
            <?php }?>
            

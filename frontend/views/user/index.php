@@ -70,6 +70,26 @@ $user=yii::$app->user->identity;
 				成长路径  <span class="mui-pull-right "><img src="img/grow.png" class="icon-img"> </span>
 			</a>
 		</li>
+		<?php if($user->role_id==1 || $user->role_id==5 || $user->role_id==6){?>
+		 <li class="mui-table-view-cell"  >
+			<a class="" href="<?= Url::to(['my-task'])?>">
+				我的任务  <span class="mui-pull-right "><img src="img/grow.png" class="icon-img"> </span>
+			</a>
+		</li>   
+		<?php }?>
+		<?php if($user->role_id==3 || $user->role_id==4){?>
+		 <li class="mui-table-view-cell"  >
+			<a  href="<?= Url::to(['down-task'])?>" class="mui-navigate-right">
+				下级任务 
+			</a>
+		</li>   
+		<li class="mui-table-view-cell"  >
+			<a  href="<?= Url::to(['down-user'])?>" class="mui-navigate-right">
+				下级用户
+			</a>
+		</li> 
+		
+		<?php }?>
 		<li class="mui-table-view-cell"  >
 			<a class="mui-navigate-right" href="<?= Url::to(['site/logout'])?>">
 				退出登录 

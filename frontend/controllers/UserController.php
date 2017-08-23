@@ -26,6 +26,8 @@ use common\models\ResumePhoto;
 use common\models\TestLink;
 use common\models\ActivityRegister;
 use common\models\ActivityStep;
+use common\models\TaskResult;
+use common\models\AuthUser;
 
 /**
  * WishController implements the CRUD actions for Wish model.
@@ -258,6 +260,39 @@ class UserController extends Controller
         return $this->render('my-activity',['dataProvider'=>$dataProvider]);
     }
     
+    public function actionDownTask(){
+        $user=yii::$app->user->identity;
+        $downUser=AuthUser::findAll(['up_work_number'=>$user->work_number]);
+        $work_numbers=[];
+        foreach ($downUser as $v){
+            $work_numbers[]=$v->work_number;
+        }
+        $dataProvider=new ActiveDataProvider([
+            'query'=>TaskResult::find()->andWhere(['work_number'=>$work_numbers])->orderBy('created_at desc')
+        ]);
+        return $this->render('down-task',['dataProvider'=>$dataProvider]);
+    }
+    
+    public function actionDownUser(){
+        $user=yii::$app->user->identity;
+        $downUser=AuthUser::findAll(['up_work_number'=>$user->work_number]);
+        $work_numbers=[];
+        foreach ($downUser as $v){
+            $work_numbers[]=$v->work_number;
+        }
+        $dataProvider=new ActiveDataProvider([
+            'query'=>User::find()->andWhere(['work_number'=>$work_numbers])->orderBy('created_at desc')
+        ]);
+        return $this->render('down-user',['dataProvider'=>$dataProvider]);
+    }
+    public function actionMyTask(){
+        $user=yii::$app->user->identity;
+        $dataProvider=new ActiveDataProvider([
+            'query'=>TaskResult::find()->andWhere(['user_guid'=>$user->user_guid])->orderBy('created_at desc')
+        ]);
+        return $this->render('my-task',['dataProvider'=>$dataProvider]);
+    }
+    
     public function  actionActivityStep($id){
         $user=yii::$app->user->identity;
         $model=ActivityRegister::findOne($id);
@@ -347,6 +382,7 @@ class UserController extends Controller
         
         return $this->redirect(['profile','user_guid'=>yii::$app->user->identity->user_guid]);
     }
+    
     
     public  function actionProfile($id){
         $model=User::findOne($id);

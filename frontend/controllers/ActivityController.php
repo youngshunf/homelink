@@ -65,12 +65,13 @@ class ActivityController extends Controller
         $searchModel = new SearchActivity();
         $searchModel->is_top=0;
         $user=yii::$app->user->identity;
-        $searchModel->pid=['0',$user->pid];
+        $searchModel->pFlag=1;
+        $searchModel->pid=$user->pid;
         
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $yearMonth=date("Y-m");
         $topData =new ActiveDataProvider([
-            'query'=>Activity::find()->andWhere(['is_top'=>1])->orderBy("start_time desc"),
+            'query'=>Activity::find()->andWhere(['is_top'=>1,'pid'=>$user->pid])->orderBy("start_time desc"),
         ]);
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -148,6 +149,21 @@ class ActivityController extends Controller
         $user=User::findOne(['user_guid'=>$user_guid]);
         $model= $this->findModel($id);
         $work_number=yii::$app->user->identity->work_number;
+        if(empty($model->qrcode)){
+            //二维码生成
+            $qrPath='../../upload/photo/qrcode/sign/';
+            if(!is_dir($qrPath)){
+                mkdir($qrPath);
+            }
+            $qrName='sign'.date("YmdHis").rand(1000, 9999).'.png';
+            $qrFile=$qrPath.$qrName;
+            $id=$model->activity_id;
+            if(!file_exists($qrFile)){
+                QrCode::png(yii::$app->urlManager->createAbsoluteUrl('activity/sign')."?activity_id=$id",$qrFile,Enum::QR_ECLEVEL_H,7);
+            }
+            $model->qrcode=$qrName;
+            $model->save();
+        }
         if($model->type!=3){
         $registerModel=ActivityRegister::findOne(['activity_id'=>$id,'work_number'=>$work_number]);
         if(!empty($registerModel)){
@@ -181,25 +197,16 @@ class ActivityController extends Controller
                $registerModel->sign_shop=$_POST['signShop'];
            }
            $registerModel->created_at=time();
-           //二维码生成
-           $qrPath='../../upload/photo/qrcode/sign/';
-           if(!is_dir($qrPath)){
-               mkdir($qrPath);
-           }
-           $qrName='sign'.date("YmdHis").rand(1000, 9999).'.png';
-           $qrFile=$qrPath.$qrName;
-           if(!file_exists($qrFile)){
-               QrCode::png(yii::$app->urlManager->createAbsoluteUrl('activity/sign')."?activity_id=$id&work_number=$registerModel->work_number",$qrFile,Enum::QR_ECLEVEL_H,7);
-           }
+          
            $registerModel->name=@$_POST['name'];
            $registerModel->work_number=@$_POST['work_number'];
            $registerModel->mobile=@$_POST['mobile'];
            $registerModel->answer=@$_POST['answer'];
            $registerModel->activity_id=$id;
            $registerModel->user_guid=$user_guid;
-           $registerModel->sign_qrcode=$qrName;
+//            $registerModel->sign_qrcode=$qrName;
            if($registerModel->save()){
-               yii::$app->getSession()->setFlash('success',"活动报名成功,请让管理员扫码你的二维码进行签到!");
+               yii::$app->getSession()->setFlash('success',"活动报名成功!");
                return $this->redirect(['view-register','id'=>$id]);
            }else{
                yii::$app->getSession()->setFlash('error',"提交失败,请重试!");
@@ -287,15 +294,13 @@ class ActivityController extends Controller
         ]);
     }
     
-    public function actionSign($activity_id,$work_number)
+    public function actionSign($activity_id)
     {
         $user_guid=yii::$app->user->identity->user_guid;
         $user=User::findOne(['user_guid'=>$user_guid]);
+        $work_number=$user->work_number;
         
-        //不是签到管理员,无权进行签到
-        if($user->is_sign_manager==0){
-            return $this->render('permission-deny');
-        }
+        
         
         $registerModel=ActivityRegister::findOne(['activity_id'=>$activity_id,'work_number'=>$work_number]);
         if(empty($registerModel)){
@@ -304,7 +309,6 @@ class ActivityController extends Controller
         
         if($registerModel->is_sign==0){
             $registerModel->is_sign=1;
-            $registerModel->sign_manager=$user_guid;
             $registerModel->sign_time=time();
             $registerModel->save();
         }

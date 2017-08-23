@@ -36,15 +36,12 @@ img{
         <h1 class="center" ><i class="icon-ok time"></i> 签到成功!</h1>
     <br>
         <p class="time"> 【签到时间】 <?= CommonUtil::fomatTime($registerModel->sign_time)?></p>
-         <p class="time">【签到管理员】<?= $registerModel['manager']['real_name']?></p>
     </div>
 
   <h5>报名信息</h5>
    <p><label class="label-control">工号:</label> <?= $registerModel->work_number?></p>
    <p><label class="label-control">姓名:</label> <?= $registerModel->name?></p>
    <p><label class="label-control">手机:</label> <?= $registerModel->mobile?></p>
-   <p><label class="label-control">邮箱:</label> <?= $registerModel->email?></p>
-   <p><label class="label-control">微信:</label> <?= $registerModel->weixin?></p>
   <?php if($model->type==1){?>
   <p><label class="label-control">竞聘店面: </label><?= $registerModel->sign_shop?></p>
   <?php }?>

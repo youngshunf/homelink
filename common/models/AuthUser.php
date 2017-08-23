@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use backend\models\AdminUser;
 
 /**
  * This is the model class for table "auth_user".
@@ -56,5 +57,9 @@ class AuthUser extends \yii\db\ActiveRecord
             'up_work_number' => '上级工号',
             'created_at' => '导入时间',
         ];
+    }
+    
+    public function getPuser(){
+        return $this->hasOne(AdminUser::className(), ['id'=>'pid']);
     }
 }

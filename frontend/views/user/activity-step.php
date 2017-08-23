@@ -27,14 +27,17 @@ $steps=ActivityStep::find()->andWhere(['activity_id'=>$model->activity_id])->ord
 <!--     <script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script> -->
 <!--     <script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script> -->
 <div id="steps" class="content">
-    <Steps :current="<?= $model->current_step-1?>" direction="vertical">
+    <Steps :current="<?= $model->current_step-1?>" direction="vertical" <?php if($model->current_status==99) echo 'status="error"';?>>
     <?php foreach ($steps as $v){?>
        <?php if($v->step>$model->current_step){?>
-        <Step title="待进行" content="<?= $v->content?>"></Step>
+        <Step title="<?= $v->title?>-待进行" content=""></Step>
         <?php }elseif($v->step==$model->current_step){?>
-        <Step title="<?= CommonUtil::getDescByValue('step', 'status', $model->current_status)?>" content="<?= $v->content?>"></Step>
+        <Step title="<?= $v->title.'-'.CommonUtil::getDescByValue('step', 'status', $model->current_status)?>" content="<?php
+        if($model->current_status==99){
+            echo $v->deny_desc;
+        }elseif($model->current_status==2){ echo $v->content;}?>"></Step>
         <?php }else{?>
-         <Step title="<?= CommonUtil::getDescByValue('step', 'status', $v->status)?>" content="<?= $v->content?>"></Step>
+         <Step title="<?= $v->title ?>-已完成"  content="<?= $v->content?>"></Step>
         <?php }?>
      <?php }?>
     </Steps>

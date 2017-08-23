@@ -33,7 +33,6 @@ use kartik\widgets\DatePicker;
     <?= $form->field($model, 'age')->textInput(['type'=>'number']) ?>
        <?= $form->field($model, 'province')->textInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'city')->textInput(['maxlength' => 20]) ?>
-        <?= $form->field($model, 'talent')->dropDownList(['MVP' =>'MVP','SVP'=>'SVP','DVP'=>'DVP']) ?>
     <div class="form-group center bottom-btn">
         <?= Html::submitButton( '提交' , ['class' => 'btn btn-success btn-block btn-lg' ]) ?>
     </div>

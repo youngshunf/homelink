@@ -15,6 +15,10 @@ use yii\web\View;
 $this->title = $model->title;
 $this->registerJsFile('@web/js/lodash.min.js');
 $this->registerJsFile('@web/js/vue.min.js', ['position'=> View::POS_HEAD]);
+$this->registerJsFile('@web/js/jquery-1.8.3.min.js');
+$this->registerJsFile('@web/js/jquery.fancybox.js');
+$this->registerCssFile('@web/css/jquery.fancybox.css');
+$user=yii::$app->user->identity;
 ?>
 <style>
 
@@ -35,6 +39,16 @@ img{
 }
 
 </style>
+<?php if($user->is_sign_manager==1){?>
+ <div class="center content">
+  <h5>签到二维码</h5>
+  <label class="label-control"> 请让报名用户扫描此二维码进行签到</label>
+  <a class="fancybox"  title="扫描二维码签到"  data-fancybox-group="gallery"  href="<?= yii::getAlias('@photo')?>/qrcode/sign/<?=$model->qrcode?>">
+            <img alt="签到二维码" src="<?= yii::getAlias('@photo')?>/qrcode/sign/<?=$model->qrcode?>" class="img-responsive">
+    </a>   
+  </div>
+
+<?php }?>
   <div class="c_img">
             <img alt="<?= $model->title?>" src="<?= yii::getAlias('@photo').'/'.$model->path.'standard/'.$model->photo?>" class="img-responsive">
             <div class="c_words">
@@ -72,7 +86,7 @@ img{
          <p class="bold"> 对不起，报名人数已满，下次早点来吧</p>
         <?php }else {?>
      
-    <?php if($model->scope==0 || ($model->scope==1&&yii::$app->user->identity->role_id==1) || ($model->scope==2&&yii::$app->user->identity->role_id==2) || ($model->scope==3&&yii::$app->user->identity->role_id==3) ){?>
+    <?php if($model->scope==0 || ($model->scope==$user->role_id) ){?>
    <?php if($model->type!=3){?>
   
    <?php $form = ActiveForm::begin(['id'=>'register-form','options' => ['class'=>'mui-input-group','onsubmit'=>'return checkAnswer()']]); ?>
@@ -250,6 +264,11 @@ function check(){
    return true;
  }
 
+ $(document).ready(function(){
+ 	$('.fancybox').fancybox({
+ 		closeClick : true,
+ 	});
+ });
 </script>
 
 

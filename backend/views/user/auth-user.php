@@ -20,7 +20,7 @@ $user=yii::$app->user->identity;
     <form enctype="multipart/form-data" method="post" action="<?php echo Url::to('import-auth')?>" onsubmit="return check()">
 		<div class="">					
 			<input type="file" value="文件" name="importfrom" id="importfrom" >	
-			<span class="red">*导入新数据会将原来的数据清空</span>
+			<span class="red">*只需导入新增加和需要修改的用户</span>
 			<br>
 			<input type="submit" value="导入验证名单"  class="btn btn-success" >
 		  <p id="errorImport"></p>
@@ -43,8 +43,19 @@ $user=yii::$app->user->identity;
             'big_district',
             'business_district',
             'shop',
+            ['attribute'=>'puser.company',
+                'label'=>'城市公司'
+            ],
             'up_work_number',
-
+            ['class' => 'yii\grid\ActionColumn',
+                'header'=>'操作',
+                'template'=>'{delete-authuser}',
+                'buttons'=>[
+                'delete-authuser'=>function ($url,$model,$key){
+                    return  Html::a('删除 ', $url, ['title' => '删除', 'data-confirm'=>'您确定删除此用户?'] );
+                },
+             ]
+            ],
         ],
     ]); ?>
 <?php Pjax::end();?>

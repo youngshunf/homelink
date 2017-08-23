@@ -21,13 +21,15 @@ class AppAsset extends AssetBundle
         'AdminLTE/dist/css/AdminLTE.min.css',
         'AdminLTE/dist/css/skins/_all-skins.css',
         'icheck/skins/all.css',
-        'css/site.css'
+        'css/site.css',
+        'css/iview.css'
     ];
     public $jsOptions=[
         'position'=> View::POS_HEAD
     ];
     public $js = [
-        'icheck/icheck.min.js',
+        'js/vue.min.js',
+        'js/iview.min.js',
         'AdminLTE/dist/js/app.min.js'
     ];
     public $depends = [

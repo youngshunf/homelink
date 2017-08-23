@@ -35,6 +35,8 @@ use yii\helpers\Json;
 			    '商圈经理'=>2,
 			    '总监'=>3,
 			    '副总'=>4,
+			    'SVP'=>5,
+			    'DVP'=>6,
 			    '其他'=>9
 			];
 			return $arr[$val];

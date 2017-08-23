@@ -30,25 +30,29 @@ $this->title=$model->task_name.'-评分';
 					
 				</li>
 				<li class="mui-table-view-cell mui-media">
-				 <p>【被评价MVP】</p>
+				<div class="mui-media-body">
+				 <p>【被评价】</p>
 				 <p>  姓名:<?= $model->user->real_name?></p>
 				 <p>  工号:<?= $model->work_number?></p>
+				 </div>
 				</li>
 			
 	</ul>
+	<div class="content">
     
     <?php $form = ActiveForm::begin(['options' => ['onsubmit'=>'return check()']]); ?>
 
     <?= $form->field($model, 'comment_result')->radioList(['0'=>'未完成','1'=>'已完成'])->label('任务完成情况') ?>
     
+      <?= $form->field($model, 'score')->textInput(['type'=>'number']) ?>
     <?= $form->field($model, 'comment')->textarea(['rows'=>5]) ?>
     
     <div class="form-group">
-        <?= Html::submitButton('提交', ['class' => 'btn btn-success' ]) ?>
+        <?= Html::submitButton('提交', ['class' => 'btn btn-success btn-block btn-lg' ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
+	</div>
 </div>
 
 <script>

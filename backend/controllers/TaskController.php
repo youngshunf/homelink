@@ -16,6 +16,7 @@ use yii\web\UploadedFile;
 use common\models\CommonUtil;
 use common\models\UserGroup;
 use common\models\TaskStep;
+use yii\filters\AccessControl;
 
 /**
  * TaskController implements the CRUD actions for Task model.
@@ -25,12 +26,22 @@ class TaskController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => [],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
                 ],
             ],
+//             'verbs' => [
+//                 'class' => VerbFilter::className(),
+//                 'actions' => [
+//                     'delete' => ['post'],
+//                 ],
+//             ],
         ];
     }
 
@@ -235,16 +246,19 @@ class TaskController extends Controller
     public function actionCreate()
     {
         $model = new Task();
-
+        $user=yii::$app->user->identity;
         if ($model->load(Yii::$app->request->post())) {
             $photo=ImageUploader::uploadByName('photo');
             if($photo){
                 $model->path=$photo['path'];
                 $model->photo=$photo['photo'];
             }
-            $user=yii::$app->user->identity;
+          
             if($user->role_id==98){
                 $model->pid=$user->id;
+            }
+            if(empty($model->group_id)){
+                $model->group_id=0;
             }
              $model->start_time=strtotime($model->start_time);
              $model->end_time=strtotime($model->end_time);
@@ -274,7 +288,12 @@ class TaskController extends Controller
             }
             
         } 
-            $group=UserGroup::find()->orderBy('created_at desc')->all();
+            if($user->role_id==98){
+                $group=UserGroup::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc')->all();
+            }else{
+                $group=UserGroup::find()->orderBy('created_at desc')->all();
+            }
+            
             return $this->render('create', [
                 'model' => $model,
                 'group'=>$group
@@ -297,6 +316,9 @@ class TaskController extends Controller
             if($photo){
                 $model->path=$photo['path'];
                 $model->photo=$photo['photo'];
+            }
+            if(empty($model->group_id)){
+                $model->group_id=0;
             }
             $model->start_time=strtotime($model->start_time);
             $model->end_time=strtotime($model->end_time);
@@ -329,7 +351,12 @@ class TaskController extends Controller
                 yii::$app->getSession()->setFlash('error','提交失败!');
             }
         } 
-            $group=UserGroup::find()->orderBy('created_at desc')->all();
+            $user=yii::$app->user->identity;
+            if($user->role_id==98){
+                $group=UserGroup::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc')->all();
+            }else{
+                $group=UserGroup::find()->orderBy('created_at desc')->all();
+            }
             return $this->render('update', [
                 'model' => $model,
                 'group'=>$group

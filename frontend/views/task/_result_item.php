@@ -25,16 +25,16 @@ use common\models\TaskResult;
 							<p><span>领取时间:<?= CommonUtil::fomatTime($model->created_at)?></span></p>
 						<?php if($model->is_comment==0){?>
 							<p class="center">
-						<a class="mui-btn mui-btn-primary"  href="<?= Url::to(['grow-view','work_number'=>$model->work_number])?>">查看mvp成长记录</a>
-						<a class="mui-btn mui-btn-success " href="<?= Url::to(['comment-task','id'=>$model->id])?>">去评分</a>
+						<a class="btn btn-success "  href="<?= Url::to(['grow-view','work_number'=>$model->work_number])?>">查看mvp成长记录</a>
+						<a class="btn btn-success " href="<?= Url::to(['comment-task','id'=>$model->id])?>">去评分</a>
 						</p>
 						<?php }else{?>
 						<p >
 						   得分 : <span class="green"><?= $model->score?></span></p>
 						<p >评价：<?= $model->comment?></p>
 						<p class="center">
-						<a class="mui-btn mui-btn-primary"  href="<?= Url::to(['grow-view','work_number'=>$model->work_number])?>">查看mvp成长记录</a>
-						<a class="mui-btn mui-btn-success " href="<?= Url::to(['comment-task','id'=>$model->id])?>">修改</a>
+						<a class="btn btn-success "  href="<?= Url::to(['grow-view','work_number'=>$model->work_number])?>">查看mvp成长记录</a>
+						<a class="btn btn-success " href="<?= Url::to(['comment-task','id'=>$model->id])?>">修改</a>
 						</p>
 						<?php }?>
 						</div>

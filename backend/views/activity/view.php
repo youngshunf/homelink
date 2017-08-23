@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 use common\models\ActivityStep;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Activity */
@@ -187,7 +188,10 @@ $this->registerCssFile('@web/css/mui.min.css');
             $maxStep=count($steps);
       foreach ($steps as $v){
       ?>
-        <Step title="<?= $v->title ?> - <?= CommonUtil::getDescByValue('step', 'status', $v->status) ?>" content="<?= $v->content?>"></Step>
+        <Step title="<?= $v->title ?> - <?= CommonUtil::getDescByValue('step', 'status', $v->status) ?>" content="通知: <?= $v->content?>
+        <?php if($v->type==0){?>
+        淘汰通知:<?= $v->deny_desc?>
+        <?php }?>"></Step>
        <?php }?>
       
      </Steps>
@@ -215,8 +219,13 @@ $this->registerCssFile('@web/css/mui.min.css');
     <?php if($model->current_type==0){?>
     <a class="btn btn-success " href="javascript:;" id="step-deny">当前环节批量淘汰</a>
     <a class="btn btn-success " href="javascript:;" id="step-pass">当前环节批量通过</a>
+    <button class="btn btn-success" id="import-step">导入当前环节状态</button>
     <?php }?>
+    
+    
     <a class="btn btn-success " href="<?= Url::to(['export-register','activity_id'=>$model->activity_id])?>">导出报名结果</a></p>
+    
+    
   <p class="clear"></p>
     <?php Pjax::begin(['id'=>'register-field'])?>
     <?= GridView::widget([
@@ -238,6 +247,13 @@ $this->registerCssFile('@web/css/mui.min.css');
             'name',
             'mobile',
             'email',
+            ['attribute'=>'当前环节','value'=>function ($model){
+                $step=ActivityStep::findOne(['activity_id'=>$model->activity_id,'step'=>$model->current_step]);
+                return $step->title;
+            }],  
+            ['attribute'=>'当前状态','value'=>function ($model){
+                return CommonUtil::getDescByValue('step','status',$model->current_status);
+            }], 
             ['attribute'=>'created_at','value'=>function ($model){
                return CommonUtil::fomatTime($model->created_at);
            }],    
@@ -266,9 +282,47 @@ $this->registerCssFile('@web/css/mui.min.css');
         </div>
         </div>
 </div>
+
+<!-- 导入当前环节状态 -->
+<div class="modal fade" id="relationModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               导入当前环节状态
+            </h4>
+         </div>
+         <div class="modal-body">
+            	
+              <form enctype="multipart/form-data" method="post" action="<?php echo Url::to('import-stepstatus')?>" onsubmit="return check1()">						
+        			<input type="file" value="文件" name="file" id="file" >	
+        			<input type="hidden" name="_csrf" value="<?= yii::$app->request->csrfToken ?>">
+        			<input type="hidden" name="activity_id" value="<?= $model->activity_id ?>">
+        			<br>
+        			<p class="red">*导入当前环节的状态,当前环节为通知不需要导入</p>
+        			<input type="submit" value="导入数据"  class="btn btn-success" >
+        			
+        		  <p id="errorImport1"></p>		
+            </form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default"  id="modal-close"
+               data-dismiss="modal">关闭
+            </button>
+         
+         </div>
+      </div><!-- /.modal-content -->
 </div>
+</div><!-- /.modal -->
 
 <script>
+
+
     new Vue({
         el: '#main',
         data:function(){
@@ -334,4 +388,20 @@ $this->registerCssFile('@web/css/mui.min.css');
 
         })
     })
+    
+    $('#import-step').click(function(){
+
+	$('#relationModal').modal('show');
+ });
+function check1(){
+	var importfrom = $("#file").val();
+	if(importfrom==""){
+		$("#errorImport1").html("<font color='red'>请选择导入的文件</font>");
+		return false;
+	}else{
+		showWaiting('正在导入,请稍候...');
+		return true;
+	}
+}
+    
   </script>

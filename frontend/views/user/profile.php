@@ -6,6 +6,7 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '个人信息-'.$model->real_name;
+$user=yii::$app->user->identity;
 ?>
 <style>
 img{
@@ -71,7 +72,14 @@ img{
 					<p><span class="bold">城市</span> <span class="pull-right"><?= $model->city?></span></p>
 				</li>
 				<li class="mui-table-view-cell">
-					<p><span class="bold">城市公司</span> <span class="pull-right"><?= $model->city?></span></p>
+					<p><span class="bold">城市公司</span>
+					
+					 <span class="pull-right">
+					 <?php if(!empty($model->puser)){?>
+					<?= $model->puser->company?>
+					<?php }else{?>
+					无
+					<?php }?></span></p>
 				</li>
 				<li class="mui-table-view-cell">
 					<p><span class="bold">储备人才</span> <span class="pull-right"><?= $model->talent?></span></p>
@@ -79,10 +87,14 @@ img{
 
 </ul>
 
+<?php if($user->user_guid==$model->user_guid){?>
 
     <div class="bottom-btn">
      <a class="btn btn-success btn-block btn-lg" href="<?= Url::to(['update-profile'])?>">修改个人信息</a> 
     </div>
+ <?php }?>
+ 
+ <?php if($user->user_guid==$model->user_guid){?>
 <script>
 $('#upload').click(function(){
 	$('#imgfile').click();
@@ -94,3 +106,4 @@ $('#imgfile').change(function(){
 
 
 </script>
+<?php }?>

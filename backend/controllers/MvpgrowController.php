@@ -32,9 +32,17 @@ class MvpgrowController extends Controller
     }
     
     public function actionIndex(){
-        $dataProvider=new ActiveDataProvider([
-            'query'=>GrowthRec::find()->orderBy('created_at desc'),
-        ]);
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $dataProvider=new ActiveDataProvider([
+                'query'=>GrowthRec::find()->andWhere(['pid'=>$user->id])->orderBy('created_at desc'),
+            ]);
+        }else{
+            $dataProvider=new ActiveDataProvider([
+                'query'=>GrowthRec::find()->orderBy('created_at desc'),
+            ]);
+        }
+       
         return $this->render('index',[
             'dataProvider'=>$dataProvider
         ]);
@@ -63,7 +71,9 @@ class MvpgrowController extends Controller
     
         $result = 0;
         $irecord = 0;
-    
+        $user=yii::$app->user->identity;
+        $role_id=$user->role_id;
+        $userid=$user->id;
     
         foreach ($sheetData as $record)
         {
@@ -71,16 +81,21 @@ class MvpgrowController extends Controller
             if($irecord<2){
                 continue;
             }
-             
+            
+            if(empty(trim($record['A']))){
+                continue;
+            }
+            
             $growRec=new GrowthRec();
+            if($role_id==98){
+                $growRec->pid=$userid;
+            }
             $growRec->work_number=trim($record['A']);
+            
             $growRec->item_time=trim($record['B']);
             $growRec->items=trim($record['C']);
             $growRec->score=trim($record['D']);
-           $growRec->classname=trim($record['E']);
-              /*$growRec->award=trim($record['E']);
-            $growRec->training=trim($record['F']); */
-        
+            $growRec->classname=trim($record['E']);
             $growRec->created_at=time();
             if($growRec->save()){
                 $result++;

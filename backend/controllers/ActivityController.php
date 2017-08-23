@@ -53,8 +53,10 @@ class ActivityController extends Controller
     {
         $searchModel = new SearchActivity();
         $searchModel->typeFlag=2;
+        $searchModel->pFlag=2;
         $user=yii::$app->user->identity;
         if($user->role_id==98){
+            $searchModel->pFlag=0;
             $searchModel->pid=$user->id;
         }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -208,8 +210,6 @@ class ActivityController extends Controller
         header("Pragma: no-cache");
     
         $xlsWriter->save( "php://output" );
-         
-    
     
     }
 
@@ -306,6 +306,7 @@ class ActivityController extends Controller
             $stepType=@$_POST['steptype'];
             $stepScore=@$_POST['stepscore'];
             $stepContent=@$_POST['stepcontent'];
+            $denydesc=@$_POST['denydesc'];
             foreach ($stepTitle as $k=>$v){
                 $step=new ActivityStep();
                 $step->activity_id=$model->activity_id;
@@ -314,6 +315,7 @@ class ActivityController extends Controller
                 $step->type=$stepType[$k];
                 $step->score=$stepScore[$k];
                 $step->content=$stepContent[$k];
+                $step->deny_desc=$denydesc[$k];
                 $step->created_at=time();
                 if(!$step->save()){
                     yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
@@ -364,6 +366,7 @@ class ActivityController extends Controller
             $stepType=@$_POST['steptype'];
             $stepScore=@$_POST['stepscore'];
             $stepContent=@$_POST['stepcontent'];
+            $denydesc=@$_POST['denydesc'];
             ActivityStep::deleteAll(['activity_id'=>$model->activity_id]);
             foreach ($stepTitle as $k=>$v){
                 if(empty($v)){
@@ -376,6 +379,7 @@ class ActivityController extends Controller
                 $step->type=$stepType[$k];
                 $step->score=$stepScore[$k];
                 $step->content=$stepContent[$k];
+                $step->deny_desc=$denydesc[$k];
                 $step->created_at=time();
                 if(!$step->save()){
                     yii::$app->getSession()->setFlash('success','活动发布失败,请重试!');
@@ -389,6 +393,53 @@ class ActivityController extends Controller
         }
     }
 
+    
+    public function actionImportStepstatus()
+    {
+        $file=UploadedFile::getInstanceByName('file');
+        if(!isset($file)){
+            yii::$app->getSession()->setFlash('error','文件上传失败,请重试');
+            return $this->redirect('index');
+        }
+        if ($file->extension!='xls'&&$file->extension!='xlsx'){
+            yii::$app->getSession()->setFlash('error','导入失败,请上传excel文件');
+            return $this->redirect('index');
+        }
+        $objPHPExcel = \PHPExcel_IOFactory::load($file->tempName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,false,true,true);
+        
+        $result = 0;
+        $irecord = 0;
+        $activity_id=@$_POST['activity_id'];
+            
+        foreach ($sheetData as $k=>$record)
+        {
+            if($k<2){
+                continue;
+            }
+            if(empty($record['A'])){
+                continue;
+            }
+            $work_number=trim($record['A']);
+            $status=trim($record['B']);
+            $step=ActivityRegister::findOne(['work_number'=>$work_number,'activity_id'=>$activity_id]);
+            if(!empty($step)){
+                if($status=='通过'){
+                    $step->current_status=2;
+                }else{
+                    $step->current_status=99;
+                }
+                if($step->save()){
+                    $result++;
+                }
+            }
+                
+            }
+            
+            
+        yii::$app->getSession()->setFlash('success','导入成功,本次导入'.$result.'条数据');
+        return $this->redirect(yii::$app->request->referrer);
+    }
     /**
      * Deletes an existing Activity model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

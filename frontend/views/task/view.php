@@ -8,6 +8,7 @@ use common\models\TaskResult;
 use yii\widgets\ListView;
 use yii\web\View;
 use common\models\TaskStep;
+use common\models\AuthUser;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Wish */
@@ -46,7 +47,9 @@ img{
   </div>
    <div class="content">
     <h5>任务要求</h5>
+    <div>
    <?= $model->requirement?>
+   </div>
   </div>
   
   <div class="content">
@@ -74,7 +77,9 @@ img{
     <p>【领取时间】 <?= CommonUtil::fomatTime($v->created_at)?></p>
     <p>【开始时间】 <?= CommonUtil::fomatDate($v->start_time)?></p>
     <p>【结束时间】 <?= CommonUtil::fomatDate($v->end_time)?></p>
-    <p>   <a class="btn btn-danger btn-block"  href="<?= Url::to(['task-done','id'=>$v->id])?>" >您已完成此任务</a></p>
+    <?php if($v->status==0){?>
+    <p>   <a class="btn btn-danger"  href="<?= Url::to(['task-done','id'=>$v->id])?>" >确认完成任务</a></p>
+    <?php }?>
     </li>
     <?php }?>
     </ul>
@@ -82,12 +87,17 @@ img{
     <?php } }?>
     
     <?php if($user->role_id==3 || $user->role_id==4){
-    $dataProvider=new ActiveDataProvider([
-        'query'=>TaskResult::find()->andWhere(['task_id'=>$model->id,'business_district'=>$user->business_district])->orderBy('created_at desc')
+     $downUser=AuthUser::findAll(['up_work_number'=>$user->work_number]);
+     $work_numbers=[];
+     foreach ($downUser as $v){
+         $work_numbers[]=$v->work_number;
+     }
+     $dataProvider=new ActiveDataProvider([
+        'query'=>TaskResult::find()->andWhere(['task_id'=>$model->id,'work_number'=>$work_numbers])->orderBy('created_at desc')
     ]);
         ?>
         <div class="content"> 
-        <h5>领取任务MVP列表</h5>
+        <h5>下级领取记录</h5>
     <?= ListView::widget([
     'dataProvider'=>$dataProvider,
     'itemView'=>'_result_item',
@@ -98,7 +108,7 @@ img{
     <?php }?>
    
 
-<?php if(!yii::$app->user->isGuest&&$user->role_id==1){
+<?php if(!yii::$app->user->isGuest&& ($user->role_id==1 || $user->role_id==5 || $user->role_id==6)){
     ?>
 <div class="bottom-btn">
     <a class="btn btn-success btn-block btn-lg"  href="javascript:;" id="getTask">领取任务</a>
@@ -136,12 +146,12 @@ img{
         			</div>
         			
         			<br>
-        			<input type="submit" value="确定领取"  class="btn btn-primary" >
+        			<input type="submit" value="确定领取"  class="btn btn-success btn-block btn-lg" >
         		  <p id="errorImport1"></p>		
             </form>
          </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default"  id="modal-close"
+         <div class="modal-footer center">
+            <button type="button" class="btn btn-success "  id="modal-close"
                data-dismiss="modal">关闭
             </button>
          

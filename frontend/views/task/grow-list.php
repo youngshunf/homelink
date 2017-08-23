@@ -8,18 +8,8 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\SearchTask */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-$this->title="任务列表";
+$this->title="成长路径";
 ?>
-<style>
-.mui-table-view li:first-child {
-  position: relative;
-  overflow: hidden;
-  background: #EEEEF2;
-}
-.mui-table-view-cell {
-  padding: 5px 8px;
-}
-</style>
 <form action="<?= Url::to(['search-mvp'])?>" method="post"  id="search-form">
 <input type="hidden" name="_csrf" value="<?= yii::$app->request->csrfToken?>">
   <div class="input-group">

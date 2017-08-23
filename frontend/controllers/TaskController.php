@@ -12,6 +12,7 @@ use common\models\User;
 use common\models\GrowthRec;
 use common\models\WeChatTemplate;
 use common\models\CommonUtil;
+use common\models\AuthUser;
 
 /**
  * TaskController implements the CRUD actions for Task model.
@@ -80,13 +81,18 @@ class TaskController extends Controller
   public function actionMvpGrow(){
       $user=yii::$app->user->identity;
       if($user->role_id==3||$user->role_id==4){
+          $downUser=AuthUser::findAll(['up_work_number'=>$user->work_number]);
+          $work_numbers=[];
+          foreach ($downUser as $v){
+              $work_numbers[]=$v->work_number;
+          }
           $dataProvider=new ActiveDataProvider([
-              'query'=>User::find()->andWhere(['business_district'=>$user->business_district,'is_auth'=>1])->orderBy('created_at desc')
+              'query'=>User::find()->andWhere(['work_number'=>$work_numbers,'is_auth'=>1])->orderBy('created_at desc')
           ]);
           return $this->render('grow-list',[
               'dataProvider'=>$dataProvider
           ]);
-      }elseif ($user->role_id==1){
+      }elseif ($user->role_id==1 || $user->role_id==5  || $user->role_id==6 ){
         return $this->redirect(['grow-view','work_number'=>$user->work_number]);
       }else{
           return $this->redirect(['site/permission-deny']);
@@ -110,8 +116,10 @@ class TaskController extends Controller
    */
   public function actionTaskList(){
       $user=yii::$app->user->identity;
+      $pid=$user->pid;
+      $groupid=$user->group_id;
       $dataProvider=new ActiveDataProvider([
-          'query'=>Task::find()->andWhere(['pid'=>['0',$user->pid]])->orderBy('created_at desc')
+          'query'=>Task::find()->andWhere("pid=0 or pid=$pid")->andWhere("group_id=0 or group_id=$groupid")->orderBy('created_at desc')
       ]);
   
       return $this->render('task-list',[
@@ -232,7 +240,8 @@ class TaskController extends Controller
   
   public function actionGetTask(){
       $id=$_POST['task_id'];
-      if(yii::$app->user->identity->role_id!=1){
+      $role_id=yii::$app->user->identity->role_id;
+      if(!($role_id ==1 || $role_id ==5 || $role_id ==6)){
           yii::$app->getSession()->setFlash('error','对不起,您没有权限领取任务!');
           return $this->redirect(yii::$app->request->referrer);
       }

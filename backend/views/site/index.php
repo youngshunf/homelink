@@ -3,6 +3,7 @@ use common\models\CommonUtil;
 /* @var $this yii\web\View */
 
 $this->title = '链家优才微信公众号管理后台';
+$user=yii::$app->user->identity;
 ?>
 <div class="site-index">
 
@@ -19,6 +20,26 @@ $this->title = '链家优才微信公众号管理后台';
                 <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('user/index')?>">用户管理 &raquo;</a></p>
             </div>
             </div>
+             <div class="col-lg-4">
+                <div class="panel-white">
+                <h2>活动管理</h2>
+
+                <p>发布活动,查看报名结果</p>
+
+                <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('activity/index')?>">活动管理 &raquo;</a></p>
+            </div>
+            </div>
+            
+              <div class="col-lg-4">
+                <div class="panel-white">
+                <h2>任务管理</h2>
+
+                <p>发布任务,查看任务结果</p>
+
+                <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('task/index')?>">任务管理 &raquo;</a></p>
+            </div>
+            </div>
+            <?php if($user->role_id==99){?>
         <div class="col-lg-4">
         <div class="panel-white">
                 <h2>名片管理</h2>
@@ -53,35 +74,8 @@ $this->title = '链家优才微信公众号管理后台';
             </div>
             </div>
         
-         <div class="col-lg-4">
-                <div class="panel-white">
-                <h2>报名管理</h2>
-
-                <p>发布活动,查看报名结果</p>
-
-                <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('activity/index')?>">报名管理 &raquo;</a></p>
-            </div>
-            </div>
+        
             
-              <div class="col-lg-4">
-                <div class="panel-white">
-                <h2>任务管理</h2>
-
-                <p>发布任务,查看任务结果</p>
-
-                <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('task/index')?>">任务管理 &raquo;</a></p>
-            </div>
-            </div>
-            
-              <div class="col-lg-4">
-                <div class="panel-white">
-                <h2>MVP成长记录</h2>
-
-                <p>导入mvp成长数据,查看mvp成长记录</p>
-
-                <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('mvpgrow/index')?>">MVP成长记录 &raquo;</a></p>
-            </div>
-            </div>
             
              <div class="col-lg-4">
                 <div class="panel-white">
@@ -110,7 +104,7 @@ $this->title = '链家优才微信公众号管理后台';
                 <p><a class="btn btn-primary" href="<?= yii::$app->urlManager->createUrl('interview/index')?>">优才面试 &raquo;</a></p>
             </div>
             </div>
-            
+         <?php }?>   
         </div>
 
     </div>
