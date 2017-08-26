@@ -38,7 +38,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                    'actions' => ['login','login-do','join-mvp','logout','register','mvp-lesson','error','wechat-api','test-get'],
+                        'actions' => ['login','login-do','login-fail','join-mvp','logout','register','mvp-lesson','error','wechat-api','test-get'],
                     'allow' => true,
                     'roles' => ['?'],
                     ],
