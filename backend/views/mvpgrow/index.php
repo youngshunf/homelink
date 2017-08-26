@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $searchModel common\models\SearchTask */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'MVP成长记录';
+$this->title = '成长记录';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel-white">
@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               导入MVP成长记录
+               导入成长记录
             </h4>
          </div>
          <div class="modal-body">

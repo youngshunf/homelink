@@ -67,12 +67,24 @@ class ActivityController extends Controller
         $user=yii::$app->user->identity;
         $searchModel->pFlag=1;
         $searchModel->pid=$user->pid;
+        if(isset($_GET['type'])){
+            $type=$_GET['type'];
+            $searchModel->type=$type;
+        }
         
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $yearMonth=date("Y-m");
-        $topData =new ActiveDataProvider([
-            'query'=>Activity::find()->andWhere(['is_top'=>1,'pid'=>$user->pid])->orderBy("start_time desc"),
-        ]);
+        if(isset($_GET['type'])){
+            $type=$_GET['type'];
+            $topData =new ActiveDataProvider([
+            'query'=>Activity::find()->andWhere(['is_top'=>1,'pid'=>$user->pid,'type'=>$type])->orderBy("start_time desc"),
+             ]);
+        }else{
+            $topData =new ActiveDataProvider([
+                'query'=>Activity::find()->andWhere(['is_top'=>1,'pid'=>$user->pid])->orderBy("start_time desc"),
+            ]);
+        }
+       
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
