@@ -221,7 +221,7 @@ $this->registerCssFile('@web/css/mui.min.css');
     <a class="btn btn-success " href="javascript:;" id="step-pass">当前环节批量通过</a>
     <button class="btn btn-success" id="import-step">导入当前环节状态</button>
     <?php }?>
-    
+    <a class="btn btn-success " href="<?= Url::to(['send-message','activity_id'=>$model->activity_id])?>">发送当前环节通知</a>
     
     <a class="btn btn-success " href="<?= Url::to(['export-register','activity_id'=>$model->activity_id])?>">导出报名结果</a></p>
     

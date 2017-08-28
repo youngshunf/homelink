@@ -28,6 +28,7 @@ use common\models\ActivityRegister;
 use common\models\ActivityStep;
 use common\models\TaskResult;
 use common\models\AuthUser;
+use common\models\ReportResult;
 
 /**
  * WishController implements the CRUD actions for Wish model.
@@ -242,11 +243,27 @@ class UserController extends Controller
     
     public function actionMyReport(){
         
-        yii::$app->getSession()->setFlash('error','暂未开通,敬请期待!');
-        return $this->redirect(yii::$app->request->referrer);
-        $user_guid=yii::$app->user->identity->user_guid;
+//         yii::$app->getSession()->setFlash('error','暂未开通,敬请期待!');
+        $user=yii::$app->user->identity;
+        $time=time();
+        if($user->role_id==3 || $user->role_id==4){
+            $downUser=AuthUser::findAll(['up_work_number'=>$user->work_number]);
+            $numbers=[];
+            foreach ($downUser as $v){
+                $numbers[]=$v->work_number;
+            }
+            $dataProvider=new ActiveDataProvider([
+                'query'=>ReportResult::find()->andWhere(['work_number'=>$numbers])->andWhere(" report_time <= $time")->orderBy("created_at desc"),
+            ]);
+        }else{
+            $dataProvider=new ActiveDataProvider([
+                'query'=>ReportResult::find()->andWhere(['work_number'=>$user->work_number])->andWhere(" report_time <= $time")->orderBy("created_at desc"),
+            ]);
+        }
+       
         
-        return $this->redirect(['my-report','id'=>$report->id]);       
+        
+        return $this->render('my-report',['dataProvider'=>$dataProvider]);       
     }
     
     public function  actionMyActivity(){

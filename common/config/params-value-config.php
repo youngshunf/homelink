@@ -48,5 +48,9 @@ return [
     'interview_register.is_appeal.0'=>'未申诉',
     'interview_register.is_appeal.1'=>'待处理',
     'interview_register.is_appeal.2'=>'已处理',
+    'report.type.1'=>'上级',
+    'report.type.2'=>'下级',
+    'report.type.3'=>'同级',
+    'report.type.4'=>'自评',
     
 ];

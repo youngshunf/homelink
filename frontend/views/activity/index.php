@@ -52,15 +52,16 @@ a{
       <div id="datePlugin"></div>
      </form>
  -->     
-     <?php if(!empty($topData)){
+     <?php 
+     //if(!empty($topData)){
      
-         echo 
-         ListView::widget([
-        'dataProvider' => $topData,
-          'itemView'=>'_item',            
-           'layout'=>"{items}"
-         ]); 
-     }?>
+//          echo 
+//          ListView::widget([
+//         'dataProvider' => $topData,
+//           'itemView'=>'_item',            
+//            'layout'=>"{items}"
+//          ]); 
+//      }?>
      
     <?= ListView::widget([
         'dataProvider' => $dataProvider,

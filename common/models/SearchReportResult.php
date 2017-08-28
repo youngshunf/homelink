@@ -5,12 +5,12 @@ namespace common\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Report;
+use common\models\ReportResult;
 
 /**
- * SearchReport represents the model behind the search form about `common\models\Report`.
+ * SearchReportResult represents the model behind the search form about `common\models\ReportResult`.
  */
-class SearchReport extends Report
+class SearchReportResult extends ReportResult
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class SearchReport extends Report
     public function rules()
     {
         return [
-            [['id', 'start_time', 'end_time', 'report_time', 'created_at', 'updated_at','pid'], 'integer'],
-            [['name', 'desc'], 'safe'],
+            [['id', 'reportid', 'report_time', 'created_at', 'updated_at','pid'], 'integer'],
+            [['user_guid', 'work_number', 'name', 'desc', 'path', 'photo'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class SearchReport extends Report
      */
     public function search($params)
     {
-        $query = Report::find();
+        $query = ReportResult::find()->orderBy('created_at desc');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -57,15 +57,18 @@ class SearchReport extends Report
 
         $query->andFilterWhere([
             'pid' => $this->pid,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
+            'reportid' => $this->reportid,
             'report_time' => $this->report_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'desc', $this->desc]);
+        $query->andFilterWhere(['like', 'user_guid', $this->user_guid])
+            ->andFilterWhere(['like', 'work_number', $this->work_number])
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'desc', $this->desc])
+            ->andFilterWhere(['like', 'path', $this->path])
+            ->andFilterWhere(['like', 'photo', $this->photo]);
 
         return $dataProvider;
     }

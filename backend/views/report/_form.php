@@ -11,7 +11,7 @@ use common\models\TaskStep;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="report-form row">
+<div class="report-form ">
 
     <?php $form = ActiveForm::begin(); ?>
 
