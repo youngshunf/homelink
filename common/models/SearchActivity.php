@@ -20,8 +20,8 @@ class SearchActivity extends Activity
     public function rules()
     {
         return [
-            [['activity_id', 'scope', 'type','pid','pFlag' ,'score', 'start_time', 'end_time', 'max_number', 'sign_end_time', 'created_at', 'updated_at'], 'integer'],
-            [['title', 'content', 'path', 'photo', 'province', 'city', 'address', 'shop','is_top'], 'safe'],
+            [['activity_id',  'type','pid','pFlag' ,'score', 'max_number'], 'safe'],
+            [['title', 'content', 'path', 'photo', 'province', 'city', 'address', 'shop','is_top','scope',], 'safe'],
         ];
     }
 
@@ -65,11 +65,12 @@ class SearchActivity extends Activity
         }elseif($this->typeFlag==1){
             $query->andWhere(" type=1 or type=3");
         }
-        
-        if($this->pFlag==1){
-            $query->andWhere("pid=0 or pid=".$this->pid);
-        }elseif($this->pFlag==0){
-            $query->andWhere(['pid'=>$this->pid]);
+        $user=yii::$app->user->identity;
+        if($user->role_id==98){
+            $query->andWhere(['pid'=>$user->id]);
+        }
+         if($user->role_id==99){
+            $query->andWhere("pid=0 or pid=".$user->id);
         }
 
         $query->andFilterWhere([
@@ -78,12 +79,7 @@ class SearchActivity extends Activity
             'score'=>$this->score,
             'scope' => $this->scope,
             'type' => $this->type,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
             'max_number' => $this->max_number,
-            'sign_end_time' => $this->sign_end_time,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
