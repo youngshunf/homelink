@@ -27,6 +27,10 @@ use yii\helpers\Json;
 			}
 		}
 		
+		public static function cutHtml($str,$len=100){
+		    return mb_substr(strip_tags($str), 0,$len,'utf-8').'...';
+		}
+		
 		//获取当前4S信息
 		public static function getRoleId($val){
 			$arr=[

@@ -71,7 +71,21 @@ class ImageUploader{
        return false;
     
     }
-    
+    public static function uploadFile($name){
+        $photoFile=UploadedFile::getInstanceByName($name);
+        if(empty($photoFile)){
+            return false;
+        }
+        $basePath='../../upload/file/';
+        $path=date('Ymd').'/';
+        if(!is_dir($basePath.$path)){
+            mkdir($basePath.$path);
+        }
+        $fileName=date('YmdHis').rand(0000, 9999).'.'.$photoFile->extension;
+        $photoFile->saveAs($basePath.$path.$fileName);
+        return ['path'=>$path,'photo'=>$fileName];
+        
+    }
    public  static function  uploadImageByBase64($imgData,$imgLen){
      
        if(strlen($imgData)!=$imgLen){

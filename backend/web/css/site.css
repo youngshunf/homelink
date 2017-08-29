@@ -11,6 +11,7 @@ html,body{
 }
 p{
 	color:#333 ;
+	margin: 0 0 10px !important;
 }
 
 .step{
@@ -35,7 +36,8 @@ table{
 }
 h5, .h5 {
   font-size: 17px;
-  padding-bottom: 7px;
+  padding-bottom: 7px !important;
+  margin-bottom: 10px !important;
   border-bottom: 1px solid rgb(17, 154, 171);
 }
 .wrap > .container {

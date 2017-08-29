@@ -43,7 +43,7 @@ class SearchActivity extends Activity
      */
     public function search($params)
     {
-        $query = Activity::find()->orderBy("start_time desc");
+        $query = Activity::find()->orderBy("is_top desc,start_time desc");
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

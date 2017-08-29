@@ -5,25 +5,24 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "report".
+ * This is the model class for table "report_question".
  *
  * @property integer $id
+ * @property integer $reportid
+ * @property integer $type
  * @property string $name
- * @property string $desc
- * @property integer $start_time
- * @property integer $end_time
- * @property integer $report_time
+ * @property string $question
  * @property integer $created_at
  * @property integer $updated_at
  */
-class Report extends \yii\db\ActiveRecord
+class ReportQuestion extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'report';
+        return 'report_question';
     }
 
     /**
@@ -32,9 +31,9 @@ class Report extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['desc'], 'string'],
-            [['start_time','end_time', 'report_time',], 'safe'],
-            [[ 'pid', 'created_at', 'updated_at'], 'integer'],
+            [['name'], 'required'],
+            [['reportid', 'type', 'created_at', 'updated_at'], 'integer'],
+            [['question'], 'string'],
             [['name'], 'string', 'max' => 255]
         ];
     }
@@ -46,11 +45,10 @@ class Report extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => '测评标题',
-            'desc' => '测评描述',
-            'start_time' => '开始时间',
-            'end_time' => '结束时间',
-            'report_time' => '出报告时间',
+            'reportid' => 'Reportid',
+            'type' => '问卷类型',
+            'name' => '问卷名称',
+            'question' => 'Question',
             'created_at' => '创建时间',
             'updated_at' => '修改时间',
         ];

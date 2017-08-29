@@ -162,7 +162,7 @@ $user=yii::$app->user->identity;
               </ul>
             </li>
             
-            <li class="<?php if(yii::$app->controller->id=='report') echo "active";?> treeview">
+            <li class="<?php if(yii::$app->controller->id=='report' || yii::$app->controller->id=='report-result') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-reorder"></i>
                 <span>XVP360</span>
@@ -170,6 +170,8 @@ $user=yii::$app->user->identity;
               </a>
                <ul class="treeview-menu">
                 <li class="<?php if(yii::$app->controller->id=='report'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['report/index'])?>"><i class="fa fa-circle-o"></i> 测评列表</a></li>
+                  <li class="<?php if(yii::$app->controller->id=='report-result'&&yii::$app->controller->action->id=='index') echo "active";?>" ><a href="<?= Url::to(['report-result/index'])?>"><i class="fa fa-circle-o"></i> 测评报告</a></li>
+                   <li class="<?php if(yii::$app->controller->id=='report'&&yii::$app->controller->action->id=='setting') echo "active";?>" ><a href="<?= Url::to(['report/setting'])?>"><i class="fa fa-circle-o"></i> 指标和权重设置</a></li>
               </ul>
             </li>
             
@@ -188,7 +190,7 @@ $user=yii::$app->user->identity;
            
            <?php } ?>
             <?php if($user->role_id==99){?>
-             <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
+             <li class="<?php if(yii::$app->controller->id=='interview') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
                 <span>HM面试</span>
@@ -204,7 +206,7 @@ $user=yii::$app->user->identity;
             </li>
             <?php }?>
            <?php if($user->role_id==89 || $user->role_id==88){?>
-           <li class="<?php if(yii::$app->controller->id=='interview-supervisor') echo "active";?> treeview">
+           <li class="<?php if(yii::$app->controller->id=='interview-supervisor' || yii::$app->controller->id=='user') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
                 <span>HM面试</span>
