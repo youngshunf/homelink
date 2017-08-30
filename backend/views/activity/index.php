@@ -26,11 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn','header'=>'序号'],
  
             'title',
-           ['attribute'=>'scope','value'=>function ($model){
+           ['attribute'=>'scope',
+               'filter'=>['0'=>'所有人','1'=>'MVP','5'=>'SVP','6'=>'DVP','2'=>'商圈经理','3'=>'总监'],
+               'value'=>function ($model){
                return CommonUtil::getDescByValue('activity', 'scope', $model->scope);
            }],
            ['attribute'=>'type',
-               'filter'=>['0'=>'普通活动','1'=>'竞聘活动','2'=>'外部活动','3'=>'HM面试'],
+               'filter'=>['0'=>'普通活动','2'=>'外部活动'],
                'value'=>function ($model){
                return CommonUtil::getDescByValue('activity', 'type', $model->type);
            }],

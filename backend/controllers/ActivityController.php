@@ -53,12 +53,6 @@ class ActivityController extends Controller
     {
         $searchModel = new SearchActivity();
         $searchModel->typeFlag=2;
-        $searchModel->pFlag=2;
-        $user=yii::$app->user->identity;
-        if($user->role_id==98){
-            $searchModel->pFlag=0;
-            $searchModel->pid=$user->id;
-        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
