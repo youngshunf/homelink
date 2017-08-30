@@ -15,6 +15,8 @@ use common\models\ReportTarget;
 use common\models\ReportQuestion;
 use common\models\ReportRelation;
 use yii\helpers\Json;
+use yii\web\UploadedFile;
+use common\models\CommonUtil;
 
 /**
  * ReportController implements the CRUD actions for Report model.
@@ -270,6 +272,67 @@ class ReportController extends Controller
        ReportTarget::findOne($id)->delete();
        yii::$app->getSession()->setFlash('success','删除成功!');
        return $this->redirect(['setting']);
+    }
+    
+    public function actionImportRelation()
+    {
+        $file=UploadedFile::getInstanceByName('file');
+        if(!isset($file)){
+            yii::$app->getSession()->setFlash('error','文件上传失败,请重试');
+            return $this->redirect('index');
+        }
+        if ($file->extension!='xls'&&$file->extension!='xlsx'){
+            yii::$app->getSession()->setFlash('error','导入失败,请上传excel文件');
+            return $this->redirect('index');
+        }
+        $objPHPExcel = \PHPExcel_IOFactory::load($file->tempName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,false,true,true);
+        
+        $result = 0;
+        $irecord = 0;
+        $reportid=@$_POST['reportid'];
+        
+        foreach ($sheetData as $k=>$record)
+        {
+            if($k<3){
+                continue;
+            }
+            if(empty($record['A'])){
+                continue;
+            }
+            $work_number=trim($record['A']);
+            $typeStr=trim($record['C']);
+            $type=CommonUtil::getReportType($typeStr);
+            $do_work_number=trim($record['B']);
+            $relation=new ReportRelation();
+            $relation->reportid=$reportid;
+            $relation->work_number=$work_number;
+            $relation->do_work_number=$do_work_number;
+            $relation->type=$type;
+            $relation->created_at=time();
+            if($relation->save()){
+                $result++;
+            }
+        }
+        
+        
+        yii::$app->getSession()->setFlash('success','导入成功,本次导入'.$result.'条数据');
+        return $this->redirect(yii::$app->request->referrer);
+    }
+    
+    public function actionDeleteRelation($id){
+        ReportRelation::findOne($id)->delete();
+        yii::$app->getSession()->setFlash('success','删除成功!');
+        return $this->redirect(yii::$app->request->referrer);
+    }
+    
+    public function actionViewAnswer($id){
+        $model=ReportRelation::findOne($id);
+        if(empty($model->answer)){
+            yii::$app->getSession()->setFlash('error','还未提交测评结果!');
+            return $this->redirect(yii::$app->request->referrer);
+        }
+        return $this->render('view-answer',['model'=>$model]);
     }
 
     /**

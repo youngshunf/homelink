@@ -31,7 +31,6 @@ use yii\helpers\Json;
 		    return mb_substr(strip_tags($str), 0,$len,'utf-8').'...';
 		}
 		
-		//获取当前4S信息
 		public static function getRoleId($val){
 			$arr=[
 			    " "=>9,
@@ -44,6 +43,16 @@ use yii\helpers\Json;
 			    '其他'=>9
 			];
 			return $arr[$val];
+		}
+		public static function getReportType($val){
+		    $arr=[
+		        " "=>1,
+		        '上级'=>1,
+		        '下级'=>2,
+		        '同级'=>3,
+		        '自评'=>4,
+		    ];
+		    return $arr[$val];
 		}
 		
 		public static function getUser($user_guid){

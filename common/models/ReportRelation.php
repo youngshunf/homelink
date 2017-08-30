@@ -52,6 +52,7 @@ class ReportRelation extends \yii\db\ActiveRecord
             'answer' => '评价结果',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
+            'answer_time'=>'测评时间'
         ];
     }
     public function getBeuser(){
