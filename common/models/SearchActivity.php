@@ -69,7 +69,7 @@ class SearchActivity extends Activity
         if($user->role_id==98){
             $query->andWhere(['pid'=>$user->id]);
         }
-         if($user->role_id==99){
+        if($user->role_id<=10){
             $query->andWhere("pid=0 or pid=".$user->id);
         }
 

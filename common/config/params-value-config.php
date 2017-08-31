@@ -22,6 +22,8 @@ return [
     'activity.scope.1'=>'MVP',
     'activity.scope.2'=>'商圈经理',
     'activity.scope.3'=>'总监',
+    'activity.scope.5'=>'SVP',
+    'activity.scope.6'=>'DVP',
     'activity.type.0'=>'普通活动',
     'activity.type.1'=>'竞聘活动',
     'activity.type.2'=>'外部活动',

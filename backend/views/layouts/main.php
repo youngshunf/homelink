@@ -189,7 +189,7 @@ $user=yii::$app->user->identity;
             
            
            <?php } ?>
-            <?php if($user->role_id==99){?>
+            <?php if($user->role_id==99 || ($user->role_id==98 &&$user->id=9696)){?>
              <li class="<?php if(yii::$app->controller->id=='interview') echo "active";?> treeview">
               <a href="#">
                 <i class="fa fa-money"></i>
