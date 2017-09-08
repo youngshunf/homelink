@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace frontend\controllers;
 
 use Yii;
 use common\models\Report;
@@ -17,6 +17,8 @@ use common\models\ReportRelation;
 use yii\helpers\Json;
 use yii\web\UploadedFile;
 use common\models\CommonUtil;
+use common\models\User;
+use common\models\AuthUser;
 
 /**
  * ReportController implements the CRUD actions for Report model.
@@ -48,9 +50,8 @@ class ReportController extends Controller
     {
         $searchModel = new SearchReport();
         $user=yii::$app->user->identity;
-        if($user->role_id==98){
-            $searchModel->pid=$user->id;
-        }
+         $searchModel->pid=$user->pid;
+        
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -274,50 +275,78 @@ class ReportController extends Controller
        return $this->redirect(['setting']);
     }
     
-    public function actionImportRelation()
+    public function actionAnswerQuestion($id)
     {
-        $file=UploadedFile::getInstanceByName('file');
-        if(!isset($file)){
-            yii::$app->getSession()->setFlash('error','文件上传失败,请重试');
-            return $this->redirect('index');
+        $user=yii::$app->user->identity;
+        $question=ReportQuestion::findOne($id);
+        $reportRelation=ReportRelation::findAll(['reportid'=>$question->reportid,'do_work_number'=>$user->work_number,'type'=>$question->type,'is_answer'=>'0']);
+        if(empty($reportRelation) || count($reportRelation)<=0){
+            yii::$app->getSession()->setFlash('error','您没有未评价的用户!');
+            return $this->redirect(yii::$app->request->referrer);
         }
-        if ($file->extension!='xls'&&$file->extension!='xlsx'){
-            yii::$app->getSession()->setFlash('error','导入失败,请上传excel文件');
-            return $this->redirect('index');
-        }
-        $objPHPExcel = \PHPExcel_IOFactory::load($file->tempName);
-        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,false,true,true);
-        
-        $result = 0;
-        $irecord = 0;
-        $reportid=@$_POST['reportid'];
-        
-        foreach ($sheetData as $k=>$record)
-        {
-            if($k<3){
+        $res=[];
+        foreach ($reportRelation as $k=>$v){
+            $authUser=AuthUser::findOne(['work_number'=>$v->work_number]);
+            if(empty($authUser)){
                 continue;
             }
-            if(empty($record['A'])){
-                continue;
-            }
-            $work_number=trim($record['A']);
-            $typeStr=trim($record['C']);
-            $type=CommonUtil::getReportType($typeStr);
-            $do_work_number=trim($record['D']);
-            $relation=new ReportRelation();
-            $relation->reportid=$reportid;
-            $relation->work_number=$work_number;
-            $relation->do_work_number=$do_work_number;
-            $relation->type=$type;
-            $relation->created_at=time();
-            if($relation->save()){
-                $result++;
+            $res[$k]['key']=$k;
+            $res[$k]['reportid']=$v->reportid;
+            $res[$k]['work_number']=$v->work_number;
+            $res[$k]['do_work_number']=$v->do_work_number;
+            $res[$k]['name']=$authUser->name;
+            $res[$k]['type']=$v->type;
+            $res[$k]['value']='';
+            $res[$k]['option'][]=[
+                'name'=>'非常符合',
+                'value'=>'5'
+            ];
+            $res[$k]['option'][]=[
+                'name'=>'比较符合',
+                'value'=>'4'
+            ];
+            $res[$k]['option'][]=[
+                'name'=>'一般符合',
+                'value'=>'3'
+            ];
+            $res[$k]['option'][]=[
+                'name'=>'不符合',
+                'value'=>'2'
+            ];
+            $res[$k]['option'][]=[
+                'name'=>'完全不符合',
+                'value'=>'1'
+            ];
+        }
+        $reportRelation=Json::encode($res);
+        return $this->render('answer-question',['question'=>$question,'reportRelation'=>$reportRelation]);
+    }
+    
+    public function actionSubmitAnswer(){
+        $answerArr=@$_POST['answer'];
+        if(empty($answerArr)){
+            yii::$app->getSession()->setFlash('error','未收到答案');
+            return $this->redirect(yii::$app->request->referrer);
+        }
+        if(is_string($answerArr)){
+            $answerArr=json_decode($answerArr,true);
+        }
+        foreach ($answerArr as $v){
+            $relation=ReportRelation::findOne(['reportid'=>$v['reportid'],'work_number'=>$v['work_number'],'type'=>$v['type'],'do_work_number'=>$v['do_work_number']]);
+            if(!empty($relation)){
+                $relation->answer=json_encode($v['answer']);
+                $relation->answer_time=time();
+                $relation->updated_at=time();
+                $relation->is_answer=1;
+                if(!$relation->save()){
+                    yii::$app->getSession()->setFlash('error','答案提交失败!');
+                    return $this->redirect(yii::$app->request->referrer);
+                }
             }
         }
         
-        
-        yii::$app->getSession()->setFlash('success','导入成功,本次导入'.$result.'条数据');
-        return $this->redirect(yii::$app->request->referrer);
+        yii::$app->getSession()->setFlash('success','提交成功!');
+        return $this->redirect(['index']);
     }
     
     public function actionDeleteRelation($id){

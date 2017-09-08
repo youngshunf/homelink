@@ -48,7 +48,8 @@ AppAsset::register($this);
         <nav class="mui-bar mui-bar-tab ">
 			<a class="mui-tab-item btm-nav" href="#" data-id="1">活动</a>
 			<a class="mui-tab-item btm-nav" href="#" data-id="2">任务</a>
-			<a class="mui-tab-item btm-nav" href="#" data-id="3">个人中心</a>
+			<a class="mui-tab-item btm-nav" href="#" data-id="3">XVP360</a>
+			<a class="mui-tab-item btm-nav" href="#" data-id="4">个人中心</a>
 		</nav>
      
          <?= Alert::widget() ?>
@@ -67,6 +68,9 @@ AppAsset::register($this);
 				location.href="<?= Url::to(['task/index'])?>";
 				break;
     		case 3:
+    			location.href="<?= Url::to(['report/index'])?>";
+    			break;
+    		case 4:
     			location.href="<?= Url::to(['/user'])?>";
     			break;
 			}
