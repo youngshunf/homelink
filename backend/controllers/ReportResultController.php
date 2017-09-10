@@ -12,6 +12,8 @@ use yii\filters\AccessControl;
 use common\models\User;
 use common\models\ImageUploader;
 use common\models\CommonUtil;
+use yii\web\UploadedFile;
+use common\models\Unzip;
 
 /**
  * ReportResultController implements the CRUD actions for ReportResult model.
@@ -135,6 +137,85 @@ class ReportResultController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+    
+    public function actionImportReport()
+    {
+        $file=UploadedFile::getInstanceByName('file');
+        if(!isset($file)){
+            yii::$app->getSession()->setFlash('error','文件上传失败,请重试');
+            return $this->redirect('index');
+        }
+        if ($file->extension!='xls'&&$file->extension!='xlsx'){
+            yii::$app->getSession()->setFlash('error','导入失败,请上传excel文件');
+            return $this->redirect('index');
+        }
+        
+        $zipfile=UploadedFile::getInstanceByName('zip');
+        if(!isset($zipfile)){
+            yii::$app->getSession()->setFlash('error','文件上传失败,请重试');
+            return $this->redirect('index');
+        }
+        if ($zipfile->extension!='zip'){
+            yii::$app->getSession()->setFlash('error','导入失败,请上传zip文件');
+            return $this->redirect('index');
+        }
+        $pathName=date('Ymd').'/';
+       
+        $basePath='../../upload/file/';
+        $distPath=$basePath.$pathName;
+        if(!is_dir($distPath)){
+            mkdir($distPath);
+        }
+        $z=new Unzip();
+       $unzip=$z->unzip($zipfile->tempName,$basePath.$pathName,true,false);
+       if(!$unzip){
+           yii::$app->getSession()->setFlash('error','解压文件失败!');
+           return $this->redirect('index');
+       }
+        $objPHPExcel = \PHPExcel_IOFactory::load($file->tempName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,false,true,true);
+        
+        $result = 0;
+        $irecord = 0;
+       
+        
+        
+        
+        foreach ($sheetData as $k=>$record)
+        {
+            if($k<2){
+                continue;
+            }
+            if(empty($record['A'])){
+                continue;
+            }
+            $work_number=trim($record['A']);
+            $reportResult=new ReportResult();
+            $reportResult->work_number=$work_number;
+            $ruser=User::findOne(['work_number'=>$work_number]);
+            if(!empty($ruser)){
+                $reportResult->user_guid=$ruser->user_guid;
+            }
+            $reportResult->name=trim($record['B']);
+            if(empty(trim($record['C']))){
+                $reportResult->report_time=time();
+            }else{
+                $reportResult->report_time=strtotime(trim($record['C']));
+            }
+            $reportResult->path=$pathName;
+            $reportResult->photo=trim($record['D']);
+            $reportResult->created_at=time();
+            
+           if($reportResult->save()){
+               $result++;
+           }
+            
+        }
+        
+        
+        yii::$app->getSession()->setFlash('success','导入成功,本次导入'.$result.'条数据');
+        return $this->redirect(yii::$app->request->referrer);
     }
 
     /**

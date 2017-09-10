@@ -252,6 +252,7 @@ class UserController extends Controller
             foreach ($downUser as $v){
                 $numbers[]=$v->work_number;
             }
+            $numbers[]=$user->work_number;
             $dataProvider=new ActiveDataProvider([
                 'query'=>ReportResult::find()->andWhere(['work_number'=>$numbers])->andWhere(" report_time <= $time")->orderBy("created_at desc"),
             ]);

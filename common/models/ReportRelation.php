@@ -52,11 +52,11 @@ class ReportRelation extends \yii\db\ActiveRecord
             'answer' => '评价结果',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
-            'answer_time'=>'测评时间'
+            'answer_time'=>'提交时间'
         ];
     }
     public function getBeuser(){
-        return $this->hasOne(User::className(), ['work_number'=>'work_number']);
+        return $this->hasOne(AuthUser::className(), ['work_number'=>'work_number']);
     }
     public function getDouser(){
         return $this->hasOne(User::className(), ['work_number'=>'do_work_number']);

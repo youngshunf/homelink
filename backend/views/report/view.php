@@ -115,11 +115,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'options' => ['class' => 'grid-view','style'=>'overflow:auto', 'id' => 'grid'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn','header'=>'序号'],
-            ['attribute'=>'beuser.real_name',
+            ['attribute'=>'beuser.name',
               'label'=>'被评价人姓名'
              ],
             'work_number',
-            ['attribute'=>'beuser.real_name',
+            ['attribute'=>'douser.real_name',
                 'label'=>'评价人姓名'
             ],
             'do_work_number',
@@ -174,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
         			<input type="hidden" name="_csrf" value="<?= yii::$app->request->csrfToken ?>">
         			<input type="hidden" name="reportid" value="<?= $model->id ?>">
         			<br>
-        			<p class="red">*支持多次导入,只需导入新增加的评价关系</p>
+        			<p class="red">*支持多次导入,每次只需导入新增加的评价关系</p>
         			<input type="submit" value="导入数据"  class="btn btn-success" >
         			
         		  <p id="errorImport1"></p>		

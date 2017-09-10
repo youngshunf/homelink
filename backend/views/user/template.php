@@ -28,6 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
   <li class="list-group-item">
   XVP360评价关系模板 <a class="pull-right" href="<?= yii::$app->params['uploadUrl'].'template/XVP360评价关系模板.xls'?>">下载</a>
   </li>
+  <li class="list-group-item">
+  测评报告批量上传模板 <a class="pull-right" href="<?= yii::$app->params['uploadUrl'].'template/测评报告批量上传模板.xlsx'?>">下载</a>
+  </li>
  </ul>
     
 
