@@ -70,7 +70,7 @@ class SearchActivity extends Activity
             $query->andWhere(['pid'=>$user->id]);
         }
         if($user->role_id<=10){
-            $query->andWhere("pid=0 or pid=".$user->id);
+            $query->andWhere("pid=0 or pid=".$user->pid);
         }
 
         $query->andFilterWhere([
