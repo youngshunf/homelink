@@ -475,6 +475,52 @@ use yii\helpers\Json;
          return false;
      }
      
+     public static  function SendActivityMessage($user_guid,$acitvity_id){
+         
+         if(empty($user_guid)){
+             return false;
+         }
+         $sendModel=new WeChatTemplate(yii::$app->params['appid'], yii::$app->params['appsecret']);
+         $user=User::findOne(['user_guid'=>$user_guid]);
+         $activity=Activity::findOne($acitvity_id);
+         
+         $data=[];
+         $data['first']=[
+             "value"=>'您好,您参加的活动【'.$activity->title.'】已经进行到',
+             "color"=>"#173177"
+         ];
+         $data['class']=[
+             "value"=>$activity->title,
+             "color"=>"#173177"
+         ];
+         $data['time']=[
+             "value"=>CommonUtil::fomatTime($activity->start_time).'-'.CommonUtil::fomatTime($activity->end_time),
+             "color"=>"#173177"
+         ];
+         $data['add']=[
+             "value"=>$activity->address,
+             "color"=>"#173177"
+         ];
+         $data['remark']=[
+             "value"=>'点击这里,查看详情 >>',
+             "color"=>"#173177"
+         ];
+         $result=false;
+         $finalData=[
+             "touser"=>$user->openid,
+             "template_id"=>'2vGCBVcba80h5jRKIo8anXyPJJNW6EVFRk5ikRx1n0w',
+             "url"=>'http://wechat-mvp.homelink.com.cn/activity/view?id='.$acitvity_id,
+             "topcolor"=>"#FF0000",
+             "data"=>$data
+         ];
+         $res=$sendModel->send_template_message($finalData);
+         
+         if($res['errmsg']=='ok'){
+             $result=true;
+         }
+         return $result;
+     }
+     
   
      
   

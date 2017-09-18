@@ -97,7 +97,7 @@ $this->title = 'HM面试'.$user->district_name.date('Ym');
          </div>
          <div class="modal-body">
             	
-              <form method="post" action="<?php echo Url::to('interview-supervisor/deny')?>" onsubmit="return check()">						
+              <form method="post" action="<?php echo Url::to('/interview-supervisor/deny')?>" onsubmit="return check()">						
                 <input type="hidden"  name="_csrf" value="<?= yii::$app->request->referrer?>">
                  <input type="hidden"  name="id" id="rid" >
                  <input type="hidden"  name="status" id="status" >

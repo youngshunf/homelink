@@ -250,20 +250,23 @@ class InterviewController extends Controller
                 $interviewDistrict->supervisor_number=$record['E'];
                 $interviewDistrict->supervisor_name=@$record['F'];
                 if($interviewDistrict->save()){
-                    $user=User::findOne(['work_number'=>$interviewDistrict->assistant_number]);
-                    if(!empty($user)){
-                        $user->role_id=88;
-                        $user->district_code= $interviewDistrict->district_code;
-                        $user->district_name= $interviewDistrict->district_name;
-                        $user->save();
-                    }
-                    $user=User::findOne(['work_number'=>$interviewDistrict->supervisor_number]);
-                    if(!empty($user)){
-                        $user->role_id=89;
-                        $user->district_code= $interviewDistrict->district_code;
-                        $user->district_name= $interviewDistrict->district_name;
-                        $user->save();
-                    }
+//                     $user=User::findOne(['work_number'=>$interviewDistrict->assistant_number]);
+//                     if(!empty($user)){
+//                         $user->role_id=88;
+//                         $user->district_code= $interviewDistrict->district_code;
+//                         $user->district_name= $interviewDistrict->district_name;
+//                         $user->save();
+//                     }
+                    User::updateAll(['role_id'=>'88','district_code'=>$interviewDistrict->district_code,'district_name'=>$interviewDistrict->district_name],['work_number'=>$interviewDistrict->assistant_number]);
+                    User::updateAll(['role_id'=>'89','district_code'=>$interviewDistrict->district_code,'district_name'=>$interviewDistrict->district_name],['work_number'=>$interviewDistrict->supervisor_number]);
+//                     $user=User::findOne(['work_number'=>$interviewDistrict->supervisor_number]);
+//                     if(!empty($user)){
+//                         $user->role_id=89;
+//                         $user->district_code= $interviewDistrict->district_code;
+//                         $user->district_name= $interviewDistrict->district_name;
+//                         $user->save();
+                        
+//                     }
                     $adminUser=AdminUser::findOne(['work_number'=>$interviewDistrict->assistant_number]);
                     if(empty($adminUser)){
                         $adminUser=new AdminUser();

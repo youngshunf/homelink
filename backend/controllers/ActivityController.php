@@ -414,8 +414,10 @@ class ActivityController extends Controller
             if(!empty($step)){
                 if($status=='通过'){
                     $step->current_status=2;
-                }else{
+                }elseif($status=='未通过'){
                     $step->current_status=99;
+                }else{
+                    continue;
                 }
                 if($step->save()){
                     $result++;
